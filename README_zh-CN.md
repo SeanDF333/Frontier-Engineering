@@ -19,6 +19,8 @@
 ## 🤝 贡献指南
 
 我们需要社区的力量来扩展 Benchmark 的覆盖范围。我们欢迎通过 Pull Request (PR) 的方式提交新的工程问题。如果你希望贡献，请遵循以下标准和流程：
+
+> **AI 辅助贡献**：我们欢迎使用 AI 工具辅助创建的贡献。如果您使用 AI 助手来帮助完成贡献，我们建议将本仓库中的提示词指南（`AGENT.md` 或 `AGENT_zh-CN.md`）提供给您的 AI 助手，以确保其遵循我们的标准和要求。**但是，请不要过度依赖 AI 工具或完全放手不管**。人工审查和监督对于确保质量和正确性至关重要。
 ### 样本要求
 
 1. **Reality Gap**: 必须贴近现实，考虑现实影响因素，非单纯数学抽象。
@@ -54,6 +56,16 @@
 ```
 > 上述目录结构仅作为参考模板。在确保包含所有核心要素（如背景、输入输出、评测指标）的前提下，贡献者可根据具体情况调整文件组织方式。同时，验证代码的编程语言与格式均不作限制。
 
+### 提交规范
+
+1. 运行测试命令尽量简短（最好单行命令）提交前必须测试！
+    1. python verification/evaluator.py scripts/init.py # 在benchmark下的运行，使用verification/evaluator.py作为评测入口，测试的目标也即agent evolve的目标为scripts/init.py
+    2. python -m frontier_eval task=<task_name> algorithm.iterations=0 # 与框架的适配验证。注意，请在README中说明任务注册的task_name
+2. 请注意不要包含私人信息的文件，例如:.env、API keys、IDE 配置（.vscode/）、临时文件（*.log, temp/, __pycache__/）、个人测试脚本，同时请检查提交的内容中是否包含绝对路径，避免出现复现问题和个人隐私泄露。
+
+3. **单文件闭包（Baseline，必需）**：`scripts/init.py`（以及可选的 `baseline/solution.py`）必须自包含，便于 OpenEvolve 等算法进行单文件优化。
+   - 不要 `import` 本仓库 `benchmarks/` 下的其他 Python 代码（例如任务目录下的其它 `.py` 文件）。
+   - 允许导入 Python 标准库和 `verification/requirements.txt` 中声明的第三方依赖。
 
 ### 贡献流程
 
@@ -87,7 +99,8 @@
       <th>领域</th>
       <th>任务名称</th>
       <th>状态</th>
-      <th>维护者/贡献者</th>
+      <th>贡献者</th>
+      <th>审查者</th>
       <th>备注</th>
     </tr>
   </thead>
@@ -97,12 +110,14 @@
       <td><code>MannedLunarLanding</code></td>
       <td>已完成</td>
       <td>@jdp22</td>
+      <td>@jdp22</td>
       <td>登月软着陆轨迹优化</td>
     </tr>
     <tr>
       <td><b>ElectronicDesignAutomation</b></td>
       <td><code>IntegrationPhysicalDesignOptimization</code></td>
       <td>开发中</td>
+      <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>芯片宏单元布局优化</td>
     </tr>
@@ -111,11 +126,13 @@
       <td><code>MLA</code></td>
       <td>已完成</td>
       <td>@ahydchh</td>
+      <td>@ahydchh</td>
       <td>GPUMode MLA 解码内核</td>
     </tr>
     <tr>
       <td><code>TriMul</code></td>
       <td>已完成</td>
+      <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>GPUMode 三角乘法</td>
     </tr>
@@ -124,46 +141,91 @@
       <td><code>denoising</code></td>
       <td>已完成</td>
       <td>@ahydchh</td>
+      <td>@ahydchh</td>
       <td>Open Problems 单细胞分析</td>
     </tr>
     <tr>
       <td><code>perturbation_prediction</code></td>
       <td>已完成</td>
-      <td>—</td>
+      <td>@llltttwww</td>
+      <td>@llltttwww</td>
       <td>OpenProblems 扰动响应预测（NeurIPS 2023 scPerturb）</td>
     </tr>
     <tr>
       <td><code>predict_modality</code></td>
       <td>已完成</td>
-      <td>—</td>
+      <td>@llltttwww</td>
+      <td>@llltttwww</td>
       <td>OpenProblems 模态预测（NeurIPS 2021，RNA→ADT）</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><b>Cryptographic</b></td>
+      <td><code>AES-128 CTR</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Advanced Encryption Standard, 128-bit key, Counter mode</td>
+    </tr>
+    <tr>
+      <td><code>SHA-256</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Secure Hash Algorithm 256-bit</td>
+    </tr>
+    <tr>
+      <td><code>SHA3-256</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Secure Hash Algorithm 3 256-bit</td>
     </tr>
     <tr>
       <td><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>已完成</td>
       <td>@ahydchh</td>
+      <td>@ahydchh</td>
       <td>动态内存分配实验</td>
+    </tr>
+    <tr>
+      <td><b>EngDesign</b></td>
+      <td><code>CY_03, WJ_01, XY_05, AM_02, AM_03, YJ_02, YJ_03</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td><a href="https://github.com/AGI4Engineering/EngDesign.git">EngDesign</a></td>
     </tr>
     <tr>
       <td rowspan="2"><b>StructuralOptimization</b></td>
       <td><code>ISCSO2015</code></td>
       <td>已完成</td>
-      <td>—</td>
+      <td>@yks23</td>
+      <td>@yks23</td>
       <td>45 杆 2D 桁架尺寸+形状优化</td>
     </tr>
     <tr>
       <td><code>ISCSO2023</code></td>
       <td>已完成</td>
-      <td>—</td>
+      <td>@yks23</td>
+      <td>@yks23</td>
       <td>284 杆 3D 桁架尺寸优化</td>
     </tr>
     <tr>
-      <td><b>MathModeling</b></td>
-      <td><code>SubmarineSearch</code></td>
+      <td><b>Aerodynamics</b></td>
+      <td><code>CarAerodynamicsSensing</code></td>
       <td>已完成</td>
-      <td>—</td>
-      <td>深海潜水器最优搜索 (MCM 2024B)</td>
+      <td>@LeiDQ, @llltttwww</td>
+      <td>@llltttwww</td>
+      <td>3D 汽车表面传感器布局优化，用于压力场重建</td>
+    </tr>
+    <tr>
+      <td><b>WirelessChannelSimulation</b></td>
+      <td><code>HighReliableSimulation</code></td>
+      <td>已完成</td>
+      <td>@tonyhaohan</td>
+      <td>@yks23, @ahydchh</td>
+      <td>使用重要性采样估计 Hamming(127,120) 的误码率</td>
     </tr>
   </tbody>
 </table>
@@ -172,11 +234,11 @@
 > 请创建一个 Issue 详细描述该问题的**现实背景**与**工程价值**。经讨论确认后，我们会将其加入上表，集结社区力量共同攻克。
 
 ## 🧪 评测框架
-初步实现部分评测算法与 benchmark 的对接。实现的核心部分见 `./frontier_eval`，使用方法详见[评测 README](frontier_eval/README_zh-CN.md)。
+初步实现部分评测算法与 benchmark 的对接。实现的核心部分见 `./frontier_eval`，使用方法详见[评测 README](frontier_eval/README_zh-CN.md)。注意：部分可选算法/任务依赖 `third_party/` 下的外部仓库（需要本地 clone），请按评测 README 的说明进行配置。
 
 ## 💬 加入社区
 
 欢迎加入我们的开发者社区！无论你是想讨论新的工程问题构想、寻找任务合作者，还是在贡献过程中遇到了技术问题，都可以在群里与我们随时交流。
 
 * 🟢 **飞书**: [点击这里加入我们的飞书讨论群](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=a1cuff9f-347a-43ce-8825-79c2a38038c6)
-* 🔜 **Discord / Slack**: (筹备中，即将推出...)
+* 🔜 **Discord**: [点击这里加入我们的Discord社区](https://discord.gg/hxeVhZNN)

@@ -20,6 +20,8 @@ Current AI4Research evaluation systems have the following limitations:
 
 We need the power of the community to expand the coverage of the Benchmark. We welcome the submission of new engineering problems via Pull Requests (PR). If you wish to contribute, please follow the standards and processes below:
 
+> **AI-Assisted Contributions**: We welcome contributions created with the assistance of AI tools. If you're using an AI assistant to help with your contribution, we recommend providing the prompt guide from this repository (`AGENT.md`) to ensure your AI assistant follows our standards and requirements. **However, please do not over-rely on AI tools or leave the process entirely to AI**. Human review and supervision are essential to ensure quality and correctness.
+
 ### Sample Requirements
 
 1. **Reality Gap**: Must be close to reality, considering real-world influencing factors, not purely abstract mathematics.
@@ -55,6 +57,19 @@ Each Task should contain the following file structure:
 ```
 
 > The above directory structure serves only as a reference template. Contributors may adjust the file organization based on specific circumstances, provided that all core elements (e.g., background, input/output, evaluation metrics) are included. Additionally, there are no restrictions on the programming language and format of the verification code.
+
+### Submission Guidelines
+
+1. Keep test commands as short as possible (ideally single-line commands). Testing is mandatory before submission!
+
+  1. `python verification/evaluator.py scripts/init.py` # Run under benchmark, using `verification/evaluator.py` as the evaluation entry point. The target of the test, i.e., the target of agent evolution, is `scripts/init.py`.
+  2. `python -m frontier_eval task=<task_name> algorithm.iterations=0` # Framework compatibility verification. Note: Please specify the `task_name` registered in the README.
+
+2. Please avoid files containing private information, such as: `.env`, API keys, IDE configurations (`.vscode/`), temporary files (`*.log`, `temp/`, `__pycache__`, and personal test scripts). Also, please check that the submitted content does not contain absolute paths to avoid reproducibility issues and privacy leaks.
+
+3. **Single-File Baseline Closure (Required)**: `scripts/init.py` (and optional `baseline/solution.py`) must be self-contained so tools like OpenEvolve can optimize it as a single file.
+   - Do **not** import other Python modules from this benchmark repository (e.g., `benchmarks/...` or other `.py` files in the task folder).
+   - Imports from the Python standard library and packages listed in `verification/requirements.txt` are allowed.
 
 ### Contribution Process
 
@@ -98,7 +113,8 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <th>Domain</th>
       <th>Task Name</th>
       <th>Status</th>
-      <th>Maintainer</th>
+      <th>Contributor</th>
+      <th>Reviewer</th>
       <th>Remarks</th>
     </tr>
   </thead>
@@ -108,12 +124,14 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td><code>MannedLunarLanding</code></td>
       <td>Completed</td>
       <td>@jdp22</td>
+      <td>@jdp22</td>
       <td>Lunar soft landing trajectory optimization</td>
     </tr>
     <tr>
       <td><b>ElectronicDesignAutomation</b></td>
       <td><code>IntegrationPhysicalDesignOptimization</code></td>
       <td>In Development</td>
+      <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>Chip macro placement optimization</td>
     </tr>
@@ -122,11 +140,13 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td><code>MLA</code></td>
       <td>Completed</td>
       <td>@ahydchh</td>
+      <td>@ahydchh</td>
       <td>GPUMode</td>
     </tr>
     <tr>
       <td><code>TriMul</code></td>
       <td>Completed</td>
+      <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>GPUMode</td>
     </tr>
@@ -135,46 +155,91 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td><code>denoising</code></td>
       <td>Completed</td>
       <td>@ahydchh</td>
+      <td>@ahydchh</td>
       <td>Open Problems in Single-Cell Analysis</td>
     </tr>
     <tr>
       <td><code>perturbation_prediction</code></td>
       <td>Completed</td>
-      <td>—</td>
+      <td>@llltttwww</td>
+      <td>@llltttwww</td>
       <td>NeurIPS 2023 scPerturb</td>
     </tr>
     <tr>
       <td><code>predict_modality</code></td>
       <td>Completed</td>
-      <td>—</td>
+      <td>@llltttwww</td>
+      <td>@llltttwww</td>
       <td>NeurIPS 2021, RNA→ADT</td>
+    </tr>
+    <tr>
+      <td rowspan="3"><b>Cryptographic</b></td>
+      <td><code>AES-128 CTR</code></td>
+      <td>Completed</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Advanced Encryption Standard, 128-bit key, Counter mode</td>
+    </tr>
+    <tr>
+      <td><code>SHA-256</code></td>
+      <td>Completed</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Secure Hash Algorithm 256-bit</td>
+    </tr>
+    <tr>
+      <td><code>SHA3-256</code></td>
+      <td>Completed</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Secure Hash Algorithm 3 256-bit</td>
     </tr>
     <tr>
       <td><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>Completed</td>
       <td>@ahydchh</td>
+      <td>@ahydchh</td>
       <td>Dynamic memory allocation</td>
+    </tr>
+    <tr>
+      <td><b>EngDesign</b></td>
+      <td><code>CY_03, WJ_01, XY_05, AM_02, AM_03, YJ_02, YJ_03</code></td>
+      <td>Completed</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td><a href="https://github.com/AGI4Engineering/EngDesign.git">EngDesign</a></td>
     </tr>
     <tr>
       <td rowspan="2"><b>StructuralOptimization</b></td>
       <td><code>ISCSO2015</code></td>
       <td>Completed</td>
-      <td>—</td>
+      <td>@yks23</td>
+      <td>@yks23</td>
       <td>45-bar 2D truss size + shape</td>
     </tr>
     <tr>
       <td><code>ISCSO2023</code></td>
       <td>Completed</td>
-      <td>—</td>
+      <td>@yks23</td>
+      <td>@yks23</td>
       <td>284-member 3D truss sizing</td>
     </tr>
     <tr>
-      <td><b>MathModeling</b></td>
-      <td><code>SubmarineSearch</code></td>
+      <td><b>Aerodynamics</b></td>
+      <td><code>CarAerodynamicsSensing</code></td>
       <td>Completed</td>
-      <td>—</td>
-      <td>MCM 2024B</td>
+      <td>@LeiDQ, @llltttwww</td>
+      <td>@llltttwww</td>
+      <td>Sensor placement on 3D car surface for pressure field reconstruction</td>
+    </tr>
+    <tr>
+      <td><b>WirelessChannelSimulation</b></td>
+      <td><code>HighReliableSimulation</code></td>
+      <td>Completed</td>
+      <td>@tonyhaohan</td>
+      <td>@yks23, @ahydchh</td>
+      <td>BER estimation with importance sampling for Hamming(127,120)</td>
     </tr>
   </tbody>
 </table>
@@ -184,11 +249,11 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
 > Please create an Issue detailing the **real-world background** and **engineering value** of the problem. After discussion and confirmation, we will add it to the table above to rally community power to solve it together.
 
 ## 🧪 Evaluation Framework
-An initial integration between some evaluation algorithms and benchmarks has been implemented. The core implementation is located in `./frontier_eval`. For usage instructions, see the [Evaluation README](frontier_eval/README.md).
+An initial integration between some evaluation algorithms and benchmarks has been implemented. The core implementation is located in `./frontier_eval`. For usage instructions, see the [Evaluation README](frontier_eval/README.md). Note: some optional algorithms/benchmarks require extra repos under `third_party/` (local clones); the Evaluation README documents how to set them up.
 
 ## 💬 Join the Community
 Welcome to our developer community! Whether you want to discuss new engineering problem concepts, find task collaborators, or encounter technical issues during your contribution, you can always communicate with us in the group.
 
 * 🟢 **Feishu (Lark)**: [Click here to join our Feishu discussion group](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=a1cuff9f-347a-43ce-8825-79c2a38038c6)
 
-* 🔜 **Discord / Slack**: (Preparing, coming soon...)
+* 🔜 **Discord**: [Click here to join our Discord community](https://discord.gg/hxeVhZNN)

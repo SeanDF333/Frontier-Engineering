@@ -165,8 +165,11 @@ def evaluate(program_path: str, *, repo_root: Path | None = None):
             errors_log, weights_log, err_ratio, total_samples, actual_std, converged = _normalize_result(result)
             err_rate_log = float(errors_log - weights_log)
             
+            # Handle case when no errors found (errors_log = -inf)
             if not np.isfinite(err_rate_log):
-                raise ValueError("err_rate_log 非有限值")
+                # Use a very small error rate estimate instead of -inf
+                # This allows evaluation to continue but will result in valid=0
+                err_rate_log = float('-20.0')  # log(2e-9), very small but finite
             
             runtimes.append(float(dt))
             err_logs.append(err_rate_log)

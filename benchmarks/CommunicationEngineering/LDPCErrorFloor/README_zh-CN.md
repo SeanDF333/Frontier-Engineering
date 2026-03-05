@@ -49,10 +49,11 @@ cd benchmarks/CommunicationEngineering/LDPCErrorFloor && python verification/eva
 ldpc_error_floor
 ```
 
+该任务运行耗时较长需要增加运行时间上限
 示例：
 
 ```bash
-python -m frontier_eval task=ldpc_error_floor algorithm.iterations=0
+python -m frontier_eval task=ldpc_error_floor algorithm.iterations=0 algorithm.oe.evaluator.timeout=99999
 ```
 
 

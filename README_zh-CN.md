@@ -175,6 +175,28 @@
       <td>Secure Hash Algorithm 3 256-bit</td>
     </tr>
     <tr>
+      <td rowspan="3"><b>CommunicationEngineering</b></td>
+      <td><code>LDPCErrorFloor</code></td>
+      <td>已完成</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>使用重要性采样估计LDPC（低密度奇偶校验）码的错误地板</td>
+    </tr>
+    <tr>
+      <td><code>PMDSimulation</code></td>
+      <td>已完成</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>极化模色散（PMD）仿真</td>
+    </tr>
+    <tr>
+      <td><code>RayleighFadingBER</code></td>
+      <td>已完成</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>瑞利衰落信道误码率分析任务</td>
+    </tr>
+    <tr>
       <td><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>已完成</td>

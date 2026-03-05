@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import argparse
+import os
 import runpy
 import time
 import traceback
@@ -38,11 +39,50 @@ def _is_repo_root(path: Path) -> bool:
 
 
 def _find_repo_root() -> Path:
+    env_root = (os.environ.get("FRONTIER_ENGINEERING_ROOT") or "").strip()
+    if env_root:
+        candidate = Path(env_root).expanduser().resolve()
+        if _is_repo_root(candidate):
+            return candidate
+
     here = Path(__file__).resolve()
     for parent in [here.parent, *here.parents]:
         if _is_repo_root(parent):
             return parent
     return Path.cwd().resolve()
+
+
+def _task_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def _ensure_import_paths(repo_root: Path) -> None:
+    import sys
+
+    for p in (repo_root, _task_root()):
+        ps = str(p)
+        if ps not in sys.path:
+            sys.path.insert(0, ps)
+
+
+def _import_sampler_base(repo_root: Path):
+    _ensure_import_paths(repo_root)
+    try:
+        from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.sampler import SamplerBase
+        return SamplerBase
+    except ModuleNotFoundError:
+        from runtime.sampler import SamplerBase
+        return SamplerBase
+
+
+def _import_ldpc_code(repo_root: Path):
+    _ensure_import_paths(repo_root)
+    try:
+        from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.ldpc_code import LDPCCode
+        return LDPCCode
+    except ModuleNotFoundError:
+        from runtime.ldpc_code import LDPCCode
+        return LDPCCode
 
 
 def _wrap(metrics: dict[str, float], artifacts: dict[str, str | bytes]):
@@ -106,9 +146,7 @@ def _normalize_result(result: Any) -> tuple[float, float, float, float, float, f
 
 
 def _build_code(repo_root: Path, seed: int):
-    import sys
-    sys.path.insert(0, str(repo_root))
-    from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.ldpc_code import LDPCCode
+    LDPCCode = _import_ldpc_code(repo_root)
     
     # Create regular (3,6) LDPC code, length 1008
     code = LDPCCode.create_regular_ldpc(n=1008, dv=3, dc=6, seed=seed)
@@ -131,9 +169,7 @@ def evaluate(program_path: str, *, repo_root: Path | None = None):
     artifacts: dict[str, str | bytes] = {}
     
     try:
-        import sys
-        sys.path.insert(0, str(repo_root))
-        from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.sampler import SamplerBase
+        SamplerBase = _import_sampler_base(repo_root)
         
         try:
             module = _load_program_module(program)
@@ -294,5 +330,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
 

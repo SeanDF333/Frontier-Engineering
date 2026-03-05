@@ -9,11 +9,32 @@ import sys
 from pathlib import Path
 from numpy.random import Generator, Philox
 
-TASK_ROOT = Path(__file__).resolve().parents[1]
-REPO_ROOT = TASK_ROOT.parents[3]
-sys.path.insert(0, str(REPO_ROOT))
+def _is_repo_root(path: Path) -> bool:
+    return (path / "benchmarks").is_dir() and (path / "frontier_eval").is_dir()
 
-from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.sampler import BiasedVarianceSampler
+
+def _ensure_import_path() -> None:
+    here = Path(__file__).resolve()
+
+    for parent in [here.parent, *here.parents]:
+        if _is_repo_root(parent):
+            parent_s = str(parent)
+            if parent_s not in sys.path:
+                sys.path.insert(0, parent_s)
+            return
+
+    benchmark_root = here.parents[1]
+    if (benchmark_root / "runtime").is_dir():
+        benchmark_root_s = str(benchmark_root)
+        if benchmark_root_s not in sys.path:
+            sys.path.insert(0, benchmark_root_s)
+
+
+_ensure_import_path()
+try:
+    from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.sampler import BiasedVarianceSampler
+except ModuleNotFoundError:
+    from runtime.sampler import BiasedVarianceSampler
 
 
 class TrappingSetSampler(BiasedVarianceSampler):
@@ -52,11 +73,13 @@ class TrappingSetSampler(BiasedVarianceSampler):
 
 
 if __name__ == "__main__":
-    from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.ldpc_code import LDPCCode
+    try:
+        from benchmarks.CommunicationEngineering.LDPCErrorFloor.runtime.ldpc_code import LDPCCode
+    except ModuleNotFoundError:
+        from runtime.ldpc_code import LDPCCode
     
     code = LDPCCode.create_regular_ldpc(n=1008, dv=3, dc=6, seed=0)
     sampler = TrappingSetSampler(code, seed=0)
     result = sampler.simulate_variance_controlled(code=code)
     print(result)
-
 

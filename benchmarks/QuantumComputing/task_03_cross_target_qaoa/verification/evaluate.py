@@ -20,6 +20,7 @@ from utils import (
     timed_call,
 )
 from mqt.bench import BenchmarkLevel, get_benchmark
+from mqt.bench.benchmarks import create_circuit
 from mqt.bench.targets.devices import get_device
 from mqt.bench.targets.gatesets import ionq, rigetti
 
@@ -42,6 +43,12 @@ def register_target_equivalences(target_name: str) -> None:
         rigetti.add_equivalences(SessionEquivalenceLibrary)
 
 
+def build_qaoa_input_circuit(benchmark: str, num_qubits: int, repetitions: int, seed: int):
+    """Build a deterministic QAOA input circuit compatible with current mqt.bench API."""
+    raw_qc = create_circuit(benchmark, num_qubits, repetitions, seed)
+    return get_benchmark(benchmark=raw_qc, level=BenchmarkLevel.ALG)
+
+
 def evaluate_case_target(
     case: dict[str, Any],
     target_name: str,
@@ -56,13 +63,7 @@ def evaluate_case_target(
     case_dir = artifact_root / case["case_id"] / target_name
     case_dir.mkdir(parents=True, exist_ok=True)
 
-    input_qc = get_benchmark(
-        benchmark=benchmark,
-        level=BenchmarkLevel.ALG,
-        circuit_size=num_qubits,
-        repetitions=repetitions,
-        seed=seed,
-    )
+    input_qc = build_qaoa_input_circuit(benchmark, num_qubits, repetitions, seed)
     save_circuit_artifacts(input_qc, case_dir, "input")
 
     solver_case = dict(case)
@@ -89,13 +90,10 @@ def evaluate_case_target(
     for opt_level in (0, 1, 2, 3):
         bench_qc, bench_time = timed_call(
             get_benchmark,
-            benchmark,
+            input_qc.copy(),
             BenchmarkLevel.MAPPED,
-            num_qubits,
             target=target,
             opt_level=opt_level,
-            repetitions=repetitions,
-            seed=seed,
         )
         save_circuit_artifacts(bench_qc, case_dir, f"reference_opt_{opt_level}", save_image=False)
         metrics = compute_metrics(bench_qc)

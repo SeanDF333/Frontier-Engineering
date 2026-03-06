@@ -22,3 +22,8 @@ Each task now uses the same structure:
 - `verification/utils.py`: helper functions.
 - `tests/case_*.json`: multiple differentiated test cases.
 - `README*.md` and `TASK*.md`: run guide and task definition.
+
+## Eval
+```
+python -m frontier_eval task=unified task.benchmark=QuantumComputing task_01_routing_qftentangled/task_02_clifford_t_synthesis/task_03_cross_target_qaoa task.runtime.conda_env=mqt algorithm=openevolve algorithm.iterations=0
+```

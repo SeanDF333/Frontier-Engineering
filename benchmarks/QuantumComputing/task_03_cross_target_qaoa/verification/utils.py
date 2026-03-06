@@ -17,12 +17,6 @@ def _find_repo_root(start_dir: Path) -> Path:
     msg = f"Could not locate repository root from {start_dir}."
     raise FileNotFoundError(msg)
 
-
-REPO_ROOT = _find_repo_root(Path(__file__).resolve().parent)
-SRC_ROOT = REPO_ROOT / "src"
-if str(SRC_ROOT) not in sys.path:
-    sys.path.insert(0, str(SRC_ROOT))
-
 from qiskit.circuit import QuantumCircuit
 from qiskit.qasm2 import dump as dump_qasm2
 

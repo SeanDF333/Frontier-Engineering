@@ -22,3 +22,8 @@ pip install mqt.bench
 - `verification/utils.py`：公共工具函数。
 - `tests/case_*.json`：多个有差异的测例。
 - `README*.md` 与 `TASK*.md`：运行说明与任务定义。
+
+## 评测命令
+```
+python -m frontier_eval task=unified task.benchmark=QuantumComputing task_01_routing_qftentangled/task_02_clifford_t_synthesis/task_03_cross_target_qaoa task.runtime.conda_env=mqt algorithm=openevolve algorithm.iterations=0
+```

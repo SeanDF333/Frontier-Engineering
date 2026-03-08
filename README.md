@@ -71,6 +71,12 @@ Each Task should contain the following file structure:
    - Do **not** import other Python modules from this benchmark repository (e.g., `benchmarks/...` or other `.py` files in the task folder).
    - Imports from the Python standard library and packages listed in `verification/requirements.txt` are allowed.
 
+4. **EVOLVE-BLOCK Markers (Required for ShinkaEvolve / ABMCTS)**: The file evolved by the agent (e.g., `scripts/init.py`, or language-specific baselines like `malloclab-handout/mm.c`) must include `EVOLVE-BLOCK-START` and `EVOLVE-BLOCK-END` markers to define the *only* editable region.
+   - Keep the marker lines intact, and keep all code outside the markers read-only (CLI/I/O contracts, constraint checks, evaluator glue, etc.).
+   - Use the correct comment style for your language:
+     - Python: `# EVOLVE-BLOCK-START` / `# EVOLVE-BLOCK-END`
+     - C/C++/CUDA/Rust/Swift: `// EVOLVE-BLOCK-START` / `// EVOLVE-BLOCK-END`
+
 ### Contribution Process
 
 We adopt the standard GitHub collaboration flow:

@@ -68,6 +68,24 @@ def _relpath(path: Path | None, root: Path, *, absolute: bool) -> str:
         return str(resolved)
 
 
+def _find_program_file(*dirs: Path) -> Path | None:
+    seen: set[Path] = set()
+    for directory in dirs:
+        candidates = [
+            directory / "main.py",
+            directory / "program.py",
+        ]
+        candidates.extend(sorted(directory.glob("main.*")))
+        candidates.extend(sorted(directory.glob("program.*")))
+        for candidate in candidates:
+            if candidate in seen:
+                continue
+            seen.add(candidate)
+            if candidate.is_file():
+                return candidate
+    return None
+
+
 def _extract_baseline_metrics(output_dir: Path, algorithm: str) -> dict[str, Any]:
     algo_root = output_dir / algorithm
     if algorithm == "abmcts":
@@ -215,10 +233,12 @@ def _extract_best_info(output_dir: Path, algorithm: str) -> dict[str, Any]:
             _, best_gen, _ = _scan_shinkaevolve_best_gen(algo_root)
             if best_gen is not None:
                 step = best_gen
-                inferred_program = algo_root / f"gen_{best_gen}" / "main.py"
                 inferred_results = algo_root / f"gen_{best_gen}" / "results"
-                if program_path is None and inferred_program.is_file():
-                    program_path = inferred_program
+                if program_path is None:
+                    program_path = _find_program_file(
+                        algo_root / f"gen_{best_gen}",
+                        inferred_results,
+                    )
                 if results_dir is None and inferred_results.is_dir():
                     results_dir = inferred_results
 
@@ -246,16 +266,7 @@ def _extract_best_info(output_dir: Path, algorithm: str) -> dict[str, Any]:
 
     step = _parse_step_from_path(str(best_metrics_path))
     results_dir = best_metrics_path.parent
-    program_path = None
-    for candidate in [
-        results_dir / "main.py",
-        results_dir / "program.py",
-        results_dir.parent / "main.py",
-        results_dir.parent / "program.py",
-    ]:
-        if candidate.is_file():
-            program_path = candidate
-            break
+    program_path = _find_program_file(results_dir, results_dir.parent)
 
     return {
         "step": step,

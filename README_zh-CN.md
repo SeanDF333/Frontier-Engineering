@@ -128,7 +128,7 @@
       <td>芯片宏单元布局优化</td>
     </tr>
     <tr>
-      <td rowspan="2"><b>Kernel Engineering</b></td>
+      <td rowspan="3"><b>Kernel Engineering</b></td>
       <td><code>MLA</code></td>
       <td>已完成</td>
       <td>@ahydchh</td>
@@ -141,6 +141,13 @@
       <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>GPUMode 三角乘法</td>
+    </tr>
+    <tr>
+      <td><code>FlashAttention</code></td>
+      <td>已完成</td>
+      <td>@Geniusyingmanji</td>
+      <td>@ahydchh</td>
+      <td>为 GPU 执行优化因果型 scaled dot-product attention 前向内核</td>
     </tr>
     <tr>
       <td rowspan="3"><b>Single Cell Analysis</b></td>
@@ -225,7 +232,7 @@
       <td><a href="https://github.com/AGI4Engineering/EngDesign.git">EngDesign</a></td>
     </tr>
     <tr>
-      <td rowspan="2"><b>StructuralOptimization</b></td>
+      <td rowspan="3"><b>StructuralOptimization</b></td>
       <td><code>ISCSO2015</code></td>
       <td>已完成</td>
       <td>@yks23</td>
@@ -238,6 +245,42 @@
       <td>@yks23</td>
       <td>@yks23</td>
       <td>284 杆 3D 桁架尺寸优化</td>
+    </tr>
+    <tr>
+      <td><code>TopologyOptimization</code></td>
+      <td>已完成</td>
+      <td>@Geniusyingmanji</td>
+      <td>@ahydchh</td>
+      <td>连续、体积约束的合规最小化, 连续、体积约束的合规最小化</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><b>Robotics</b></td>
+      <td><code>DynamicObstacleAvoidanceNavigation</code></td>
+      <td>已完成</td>
+      <td>@MichaelCaoo</td>
+      <td>@yks23</td>
+      <td>在二维环境中控制差分轮机器人从起点到终点</td>
+    </tr>
+    <tr>
+      <td><code>QuadrupedGaitOptimization</code></td>
+      <td>已完成</td>
+      <td>@MichaelCaoo</td>
+      <td>@yks23</td>
+      <td>通过优化 8 个步态参数，最大化宇树 A1 仿真四足机器人的前向运动速度</td>
+    </tr>
+    <tr>
+      <td><code>RobotArmCycleTimeOptimization</code></td>
+      <td>已完成</td>
+      <td>@MichaelCaoo</td>
+      <td>@yks23</td>
+      <td>使七自由度 KUKA LBR iiwa 机械臂从起始构型运动到目标构型的轨迹时间最短，同时保证全程无碰撞</td>
+    </tr>
+    <tr>
+      <td><code>PIDTuning</code></td>
+      <td>已完成</td>
+      <td>@Geniusyingmanji</td>
+      <td>@ahydchh</td>
+      <td>二维四旋翼在多个飞行场景下调节级联 PID 控制器</td>
     </tr>
     <tr>
       <td><b>Aerodynamics</b></td>

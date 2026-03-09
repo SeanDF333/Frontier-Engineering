@@ -142,7 +142,7 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>Chip macro placement optimization</td>
     </tr>
     <tr>
-      <td rowspan="2"><b>Kernel Engineering</b></td>
+      <td rowspan="3"><b>Kernel Engineering</b></td>
       <td><code>MLA</code></td>
       <td>Completed</td>
       <td>@ahydchh</td>
@@ -155,6 +155,13 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>GPUMode</td>
+    </tr>
+    <tr>
+      <td><code>FlashAttention</code></td>
+      <td>Completed</td>
+      <td>@Geniusyingmanji</td>
+      <td>@ahydchh</td>
+      <td>Optimize a causal scaled dot-product attention forward kernel for GPU execution</td>
     </tr>
     <tr>
       <td rowspan="3"><b>Single Cell Analysis</b></td>
@@ -239,7 +246,7 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td><a href="https://github.com/AGI4Engineering/EngDesign.git">EngDesign</a></td>
     </tr>
     <tr>
-      <td rowspan="2"><b>StructuralOptimization</b></td>
+      <td rowspan="3"><b>StructuralOptimization</b></td>
       <td><code>ISCSO2015</code></td>
       <td>Completed</td>
       <td>@yks23</td>
@@ -252,6 +259,42 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>@yks23</td>
       <td>@yks23</td>
       <td>284-member 3D truss sizing</td>
+    </tr>
+    <tr>
+      <td><code>TopologyOptimization</code></td>
+      <td>Completed</td>
+      <td>@Geniusyingmanji</td>
+      <td>@ahydchh</td>
+      <td>MBB beam 2D topology optimization (SIMP), Continuous, volume-constrained, compliance minimization</td>
+    </tr>
+    <tr>
+      <td rowspan="4"><b>Robotics</b></td>
+      <td><code>DynamicObstacleAvoidanceNavigation</code></td>
+      <td>Completed</td>
+      <td>@MichaelCaoo</td>
+      <td>@yks23</td>
+      <td>Navigate a differential-drive robot from start to goal</td>
+    </tr>
+    <tr>
+      <td><code>QuadrupedGaitOptimization</code></td>
+      <td>Completed</td>
+      <td>@MichaelCaoo</td>
+      <td>@yks23</td>
+      <td>Maximize the forward locomotion speed of a quadruped robot by optimizing 8 gait parameters</td>
+    </tr>
+    <tr>
+      <td><code>RobotArmCycleTimeOptimization</code></td>
+      <td>Completed</td>
+      <td>@MichaelCaoo</td>
+      <td>@yks23</td>
+      <td>Minimize the motion time of a 7-DOF KUKA LBR iiwa arm moving from a start to a goal configuration, collision-free</td>
+    </tr>
+    <tr>
+      <td><code>PIDTuning</code></td>
+      <td>Completed</td>
+      <td>@Geniusyingmanji</td>
+      <td>@ahydchh</td>
+      <td>Tune a cascaded PID controller for a 2D quadrotor across multiple flight scenarios</td>
     </tr>
     <tr>
       <td><b>Aerodynamics</b></td>

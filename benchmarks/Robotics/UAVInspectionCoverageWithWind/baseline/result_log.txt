@@ -1,0 +1,6 @@
+Baseline run (local):
+{"score": 748467.0026201523, "feasible": true, "details": {"scene_1": {"success": true, "coverage_ratio": 0.7, "energy": 17.60541535036552, "scene_score": 699982.3945846496}, "scene_2": {"success": true, "coverage_ratio": 1.0, "energy": 14.362421683629497, "scene_score": 999985.6375783164}, "scene_3": {"success": true, "coverage_ratio": 0.5454545454545454, "energy": 21.569757054185146, "scene_score": 545432.9756974912}}}
+
+Notes:
+- Baseline is designed as a feasible reference, not a near-optimal solver.
+- Coverage ratio is the primary objective; energy acts only as tie-breaker.

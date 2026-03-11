@@ -41,6 +41,42 @@ def _control_at_time(timestamps: np.ndarray, controls: np.ndarray, t: float) -> 
     return controls[idx]
 
 
+def _dynamic_obstacle_position(obstacle: dict[str, Any], t: float) -> np.ndarray:
+    traj = obstacle.get("trajectory", [])
+    if not isinstance(traj, list) or len(traj) == 0:
+        raise ValueError("invalid_dynamic_obstacle_trajectory")
+
+    t_nodes = np.array([float(node["t"]) for node in traj], dtype=float)
+    p_nodes = np.array([node["pos"] for node in traj], dtype=float)
+    if p_nodes.ndim != 2 or p_nodes.shape[1] != 3:
+        raise ValueError("invalid_dynamic_obstacle_position_shape")
+    if not np.all(np.diff(t_nodes) >= 0):
+        raise ValueError("non_monotonic_dynamic_obstacle_timestamps")
+
+    if t <= t_nodes[0]:
+        return p_nodes[0]
+    if t >= t_nodes[-1]:
+        return p_nodes[-1]
+
+    idx = int(np.searchsorted(t_nodes, t, side="right") - 1)
+    idx = max(0, min(idx, len(t_nodes) - 2))
+    t0, t1 = float(t_nodes[idx]), float(t_nodes[idx + 1])
+    p0, p1 = p_nodes[idx], p_nodes[idx + 1]
+    alpha = 0.0 if t1 <= t0 else float((t - t0) / (t1 - t0))
+    return p0 + alpha * (p1 - p0)
+
+
+def _collides_dynamic_obstacle(pos: np.ndarray, scene: dict[str, Any], t: float) -> bool:
+    for obs in scene.get("dynamic_obstacles", []):
+        radius = float(obs.get("radius", 0.0))
+        if radius <= 0.0:
+            continue
+        center = _dynamic_obstacle_position(obs, t)
+        if float(np.linalg.norm(pos - center)) <= radius + 1e-9:
+            return True
+    return False
+
+
 def _validate_entry(scene: dict[str, Any], entry: dict[str, Any]) -> tuple[bool, str]:
     if "timestamps" not in entry or "controls" not in entry:
         return False, "missing_timestamps_or_controls"
@@ -97,6 +133,8 @@ def _simulate_scene(
         return False, {"success": False, "reason": "start_out_of_bounds"}
     if _in_no_fly(pos, scene["no_fly_zones"]):
         return False, {"success": False, "reason": "start_in_no_fly_zone"}
+    if _collides_dynamic_obstacle(pos, scene, t=0.0):
+        return False, {"success": False, "reason": "collision_dynamic_obstacle"}
 
     visited = np.zeros(len(points), dtype=bool)
     energy = 0.0
@@ -105,6 +143,8 @@ def _simulate_scene(
     while t <= t_max + 1e-9:
         dists = np.linalg.norm(points - pos, axis=1)
         visited |= dists <= coverage_radius
+        if _collides_dynamic_obstacle(pos, scene, t):
+            return False, {"success": False, "reason": "collision_dynamic_obstacle"}
 
         u = _control_at_time(timestamps, controls, t)
         a_norm = float(np.linalg.norm(u))
@@ -124,9 +164,11 @@ def _simulate_scene(
             return False, {"success": False, "reason": "out_of_bounds"}
         if _in_no_fly(pos, scene["no_fly_zones"]):
             return False, {"success": False, "reason": "entered_no_fly_zone"}
+        if _collides_dynamic_obstacle(pos, scene, t):
+            return False, {"success": False, "reason": "collision_dynamic_obstacle"}
 
     coverage_ratio = float(np.mean(visited)) if len(visited) > 0 else 1.0
-    scene_score = coverage_ratio * 1e6 - energy
+    scene_score = (coverage_ratio**2) * 1e6 - energy
     return True, {
         "success": True,
         "coverage_ratio": coverage_ratio,

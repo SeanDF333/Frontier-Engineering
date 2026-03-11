@@ -70,6 +70,52 @@ def _repel_from_no_fly(pos: np.ndarray, zones: list[dict[str, Any]], gain: float
     return repel
 
 
+def _dynamic_obstacle_position(obstacle: dict[str, Any], t: float) -> np.ndarray:
+    traj = obstacle.get("trajectory", [])
+    if not isinstance(traj, list) or len(traj) == 0:
+        return np.array([1e9, 1e9, 1e9], dtype=float)
+
+    t_nodes = np.array([float(node["t"]) for node in traj], dtype=float)
+    p_nodes = np.array([node["pos"] for node in traj], dtype=float)
+    if t <= float(t_nodes[0]):
+        return p_nodes[0]
+    if t >= float(t_nodes[-1]):
+        return p_nodes[-1]
+
+    idx = int(np.searchsorted(t_nodes, t, side="right") - 1)
+    idx = max(0, min(idx, len(t_nodes) - 2))
+    t0, t1 = float(t_nodes[idx]), float(t_nodes[idx + 1])
+    p0, p1 = p_nodes[idx], p_nodes[idx + 1]
+    alpha = 0.0 if t1 <= t0 else float((t - t0) / (t1 - t0))
+    return p0 + alpha * (p1 - p0)
+
+
+def _repel_from_dynamic_obstacles(
+    pos: np.ndarray,
+    dynamic_obstacles: list[dict[str, Any]],
+    t: float,
+    gain: float = 3.0,
+    influence_margin: float = 1.1,
+) -> np.ndarray:
+    repel = np.zeros(3, dtype=float)
+    for obs in dynamic_obstacles:
+        radius = float(obs.get("radius", 0.0))
+        if radius <= 0.0:
+            continue
+        center = _dynamic_obstacle_position(obs, t)
+        delta = pos - center
+        dist = float(np.linalg.norm(delta))
+        influence = radius + influence_margin
+        if dist < influence:
+            if dist < 1e-8:
+                delta = np.array([1.0, 0.0, 0.0], dtype=float)
+                dist = 0.0
+            else:
+                delta = delta / dist
+            repel += gain * (influence - dist) * delta
+    return repel
+
+
 def _clip_norm(vec: np.ndarray, max_norm: float) -> np.ndarray:
     n = float(np.linalg.norm(vec))
     if n <= max_norm or n < 1e-12:
@@ -124,6 +170,11 @@ def build_submission_for_scene(scene: dict[str, Any], dt: float, coverage_radius
         a_cmd = 1.4 * (desired_vel - vel) - 0.75 * wind_v
         a_cmd += _repel_from_bounds(pos, scene["bounds"])
         a_cmd += _repel_from_no_fly(pos, scene["no_fly_zones"])
+        a_cmd += _repel_from_dynamic_obstacles(
+            pos=pos,
+            dynamic_obstacles=scene.get("dynamic_obstacles", []),
+            t=t,
+        )
         a_cmd = _clip_norm(a_cmd, 0.9 * a_max)
 
         vel = vel + a_cmd * dt

@@ -26,6 +26,7 @@ p_{k+1} = p_k + (v_{k+1} + w(p_k, t_k)) * dt
 
 - 3D bounds `[xmin, xmax, ymin, ymax, zmin, zmax]`
 - no-fly zones (axis-aligned boxes)
+- dynamic obstacles (piecewise-linear center trajectory + radius)
 - inspection points
 - wind parameters
 - UAV limits (`v_max`, `a_max`)
@@ -60,9 +61,10 @@ A scene fails on any of:
 
 1. out-of-bounds
 2. entering no-fly zone
-3. speed limit violation (`||v|| > v_max`)
-4. acceleration limit violation (`||u|| > a_max`)
-5. invalid submission format
+3. collision with dynamic obstacles
+4. speed limit violation (`||v|| > v_max`)
+5. acceleration limit violation (`||u|| > a_max`)
+6. invalid submission format
 
 ## 6. Objective and Score
 
@@ -71,7 +73,7 @@ A scene fails on any of:
 - Scene score:
 
 ```text
-scene_score = coverage_ratio * 1e6 - energy
+scene_score = (coverage_ratio^2) * 1e6 - energy
 energy = sum(||u_k||^2 * dt)
 ```
 

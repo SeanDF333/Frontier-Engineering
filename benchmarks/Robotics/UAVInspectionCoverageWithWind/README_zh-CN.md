@@ -1,6 +1,6 @@
 # UAVInspectionCoverageWithWind（带风场的无人机巡检覆盖）
 
-在存在风扰动的三维场景中，优化无人机控制序列，在满足安全与运动约束的前提下最大化巡检覆盖率。
+在存在风扰动与动态障碍的三维场景中，优化无人机控制序列，在满足安全与运动约束的前提下最大化巡检覆盖率。
 
 ## 文件结构
 
@@ -43,7 +43,7 @@ python verification/evaluator.py --submission submission.json
 ## 评分规则
 
 - 主目标：覆盖率 `coverage_ratio` 越高越好。
-- 次目标：能耗 `energy` 越低越好（仅在覆盖率相同前提下比较）。
-- 单场景分数：`coverage_ratio * 1e6 - energy`。
+- 次目标：能耗 `energy` 越低越好（同覆盖率下比较）。
+- 单场景分数：`(coverage_ratio^2) * 1e6 - energy`。
 - 总分：三场景平均分。
-- 任一场景违反硬约束则整体不可行（`feasible=false`, `score=null`）。
+- 任一场景违反硬约束（含动态障碍碰撞）则整体不可行：`feasible=false`, `score=null`。

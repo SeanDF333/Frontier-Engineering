@@ -1,6 +1,6 @@
 # UAV Inspection Coverage With Wind
 
-Optimize a UAV control sequence to maximize inspection coverage under wind disturbance, while respecting hard safety and kinematic constraints.
+Optimize a UAV control sequence to maximize inspection coverage under wind disturbance, while respecting hard safety and kinematic constraints (including dynamic-obstacle avoidance).
 
 ## File Structure
 
@@ -44,10 +44,10 @@ Evaluator output:
 
 ```json
 {
-  "score": 903210.4,
+  "score": 612340.5,
   "feasible": true,
   "details": {
-    "scene_1": {"success": true, "coverage_ratio": 0.9, "energy": 18.3, "scene_score": 899981.7}
+    "scene_1": {"success": true, "coverage_ratio": 0.8, "energy": 19.5, "scene_score": 639980.5}
   }
 }
 ```
@@ -72,6 +72,6 @@ Evaluator output:
 
 - Primary objective: maximize `coverage_ratio`.
 - Tie-breaker: lower control energy.
-- Per-scene score: `coverage_ratio * 1e6 - energy`.
+- Per-scene score: `(coverage_ratio^2) * 1e6 - energy`.
 - Final score: average over all scenes.
-- Any scene constraint violation => `feasible=false`, `score=null`.
+- Any scene constraint violation (including dynamic-obstacle collision) => `feasible=false`, `score=null`.

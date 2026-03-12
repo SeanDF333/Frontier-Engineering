@@ -23,7 +23,7 @@ Required API:
 - `solve_baseline(problem: dict) -> np.ndarray`
 - `forward_intensity(problem: dict, phase: np.ndarray) -> np.ndarray`
 
-## Input / Output Contract
+
 ### Input `problem`
 - `x`, `y`: pixel coordinates
 - `aperture_amp`: aperture mask `(N, N)`

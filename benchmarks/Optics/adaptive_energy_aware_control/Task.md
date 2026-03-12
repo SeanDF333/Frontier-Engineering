@@ -28,7 +28,7 @@ Goal:
 - Maximize `score_0_to_1_higher_is_better`.
 - Respect validity constraints at every call.
 
-## Input / Output Contract
+
 
 ### Inputs
 

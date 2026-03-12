@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Validation for Task 01.
 
-Hard weighted multi-spot task with score in [0, 100] (higher is better).
+Hard weighted multi-spot task with score in [0, 1] (higher is better).
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ def score_from_metrics(ratio_mae: float, cv_spots: float, efficiency: float, min
     efficiency_score = np.clip((efficiency - 0.15) / (0.80 - 0.15), 0.0, 1.0)
     peak_score = np.clip((min_peak_ratio - 0.003) / (0.20 - 0.003), 0.0, 1.0)
 
-    return float(100.0 * (0.25 * ratio_score + 0.45 * uniform_score + 0.20 * efficiency_score + 0.10 * peak_score))
+    return float(0.25 * ratio_score + 0.45 * uniform_score + 0.20 * efficiency_score + 0.10 * peak_score)
 
 
 def spot_metrics(problem: Dict[str, Any], intensity: np.ndarray, window_radius_px: int = 1) -> Dict[str, Any]:
@@ -85,13 +85,15 @@ def spot_metrics(problem: Dict[str, Any], intensity: np.ndarray, window_radius_p
     efficiency = float(spot_energies.sum() / (intensity.sum() + 1e-12))
     min_peak_ratio = float(spot_peaks.min() / (spot_peaks.max() + 1e-12))
 
-    score_pct = score_from_metrics(ratio_mae, cv_spots, efficiency, min_peak_ratio)
+    score = score_from_metrics(ratio_mae, cv_spots, efficiency, min_peak_ratio)
+    score_pct = float(100.0 * score)
 
     return {
         "ratio_mae": ratio_mae,
         "cv_spots": cv_spots,
         "efficiency": efficiency,
         "min_peak_ratio": min_peak_ratio,
+        "score": score,
         "score_pct": score_pct,
         "spot_ratios": ratios.tolist(),
         "target_ratios": target.tolist(),
@@ -156,7 +158,7 @@ def main() -> None:
     m_oracle = spot_metrics(problem, I_oracle)
 
     valid = (
-        (m_base["score_pct"] >= 20.0)
+        (m_base["score"] >= 0.20)
         and (m_base["efficiency"] >= 0.45)
         and (m_base["min_peak_ratio"] > 0.0)
     )
@@ -165,6 +167,7 @@ def main() -> None:
         "task": "task01_weighted_multispot_single_plane",
         "valid": bool(valid),
         "valid_thresholds": {
+            "score_min": 0.20,
             "score_pct_min": 20.0,
             "efficiency_min": 0.45,
             "min_peak_ratio_min": 0.0,
@@ -177,6 +180,7 @@ def main() -> None:
             "feedback_exponent": float(args.feedback_exponent),
         },
         "delta": {
+            "score_gain": float(m_oracle["score"] - m_base["score"]),
             "score_pct_gain": float(m_oracle["score_pct"] - m_base["score_pct"]),
             "efficiency_gain": float(m_oracle["efficiency"] - m_base["efficiency"]),
             "ratio_mae_drop": float(m_base["ratio_mae"] - m_oracle["ratio_mae"]),
@@ -196,11 +200,11 @@ def main() -> None:
     )
 
     print("[Task01] valid:", summary["valid"])
-    print("[Task01] baseline score_pct={:.3f}, ratio_mae={:.6f}, cv={:.6f}, eff={:.6f}".format(
-        m_base["score_pct"], m_base["ratio_mae"], m_base["cv_spots"], m_base["efficiency"]
+    print("[Task01] baseline score={:.4f}, ratio_mae={:.6f}, cv={:.6f}, eff={:.6f}".format(
+        m_base["score"], m_base["ratio_mae"], m_base["cv_spots"], m_base["efficiency"]
     ))
-    print("[Task01] oracle   score_pct={:.3f}, ratio_mae={:.6f}, cv={:.6f}, eff={:.6f}".format(
-        m_oracle["score_pct"], m_oracle["ratio_mae"], m_oracle["cv_spots"], m_oracle["efficiency"]
+    print("[Task01] oracle   score={:.4f}, ratio_mae={:.6f}, cv={:.6f}, eff={:.6f}".format(
+        m_oracle["score"], m_oracle["ratio_mae"], m_oracle["cv_spots"], m_oracle["efficiency"]
     ))
     print("[Task01] outputs:", args.output_dir)
 

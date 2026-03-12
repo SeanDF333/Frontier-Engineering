@@ -27,7 +27,7 @@
 - `build_incident_field(problem: dict, transitions: np.ndarray)`
 - `evaluate_orders(problem: dict, intensity_x: np.ndarray, x: np.ndarray) -> dict`
 
-## 输入输出约定
+
 ### 输入
 `problem` 包含：
 - 周期、波长、焦距、采样参数

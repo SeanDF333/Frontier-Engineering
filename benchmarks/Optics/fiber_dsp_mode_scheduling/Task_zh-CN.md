@@ -36,7 +36,7 @@ def choose_dsp_mode(user_features, latency_budget_s, max_dbp_users=None, seed=0)
 - `0` = EDC
 - `1` = DBP
 
-## 输入输出语义
+
 
 `user_features` 是按用户对齐的数组字典：
 

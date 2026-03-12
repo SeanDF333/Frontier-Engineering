@@ -33,7 +33,7 @@ def pack_spectrum(user_demand_slots, n_slots, guard_slots=1, seed=0):
 - 分配成功：`(start, width)`
 - 未分配：`(-1, 0)`
 
-## 输入输出语义
+
 
 输入：
 

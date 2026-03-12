@@ -44,7 +44,7 @@ def allocate_wdm(
     }
 ```
 
-## Input / Output Semantics
+
 
 Inputs:
 

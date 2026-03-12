@@ -27,7 +27,7 @@ def compute_dm_commands(slopes, reconstructor, control_model, prev_commands=None
 - 提高排行榜分数 `score_0_to_1_higher_is_better`。
 - 保持输出始终 valid（形状正确、数值有限、不越界）。
 
-## 输入输出
+
 
 ### 输入
 

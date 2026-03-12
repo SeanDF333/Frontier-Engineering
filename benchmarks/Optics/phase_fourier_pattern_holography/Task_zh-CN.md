@@ -23,7 +23,7 @@
 - `solve_baseline(problem: dict, seed: int | None = None) -> np.ndarray`
 - `forward_intensity(problem: dict, phase: np.ndarray) -> np.ndarray`
 
-## 输入输出约定
+
 ### 输入 `problem`
 关键字段：
 - `x`, `y`：像素坐标

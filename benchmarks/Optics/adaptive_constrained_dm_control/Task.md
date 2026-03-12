@@ -28,7 +28,7 @@ Goal:
 - Improve `score_0_to_1_higher_is_better`.
 - Keep outputs always valid (shape, finite values, bound constraints).
 
-## Input / Output
+
 
 ### Inputs
 

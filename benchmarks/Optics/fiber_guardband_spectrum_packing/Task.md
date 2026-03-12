@@ -35,7 +35,7 @@ Allocation encoding per user `i`:
 - assigned: `(start, width)`
 - not assigned: `(-1, 0)`
 
-## Input / Output Semantics
+
 
 Inputs:
 

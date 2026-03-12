@@ -24,7 +24,7 @@ Goal:
 - Maximize `score_0_to_1_higher_is_better` under severe sensor faults.
 - Keep output always valid.
 
-## Input / Output Contract
+
 
 ### Inputs
 

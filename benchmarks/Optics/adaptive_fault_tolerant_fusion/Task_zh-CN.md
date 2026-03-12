@@ -24,7 +24,7 @@ def fuse_and_compute_dm_commands(slopes_multi, reconstructor, control_model, pre
 - 在重故障场景下提升 `score_0_to_1_higher_is_better`。
 - 保持输出始终 valid。
 
-## 输入输出契约
+
 
 ### 输入
 

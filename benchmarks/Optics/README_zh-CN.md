@@ -55,3 +55,52 @@ python benchmarks/Optics/phase_weighted_multispot_single_plane/verification/vali
 python benchmarks/Optics/fiber_wdm_channel_power_allocation/verification/run_validation.py
 python benchmarks/Optics/holographic_multifocus_power_ratio/verification/evaluate.py
 ```
+
+## Frontier Eval（Unified）
+
+16 个 Optics 子任务都已通过 `task=unified` 接入 `frontier_eval`，每个任务目录下都有对应元数据（`benchmarks/Optics/<task>/frontier_eval`）。
+
+示例：
+
+```bash
+python -m frontier_eval \
+  task=unified \
+  task.benchmark=Optics/phase_weighted_multispot_single_plane \
+  algorithm=openevolve \
+  algorithm.iterations=0
+```
+
+将 `task.benchmark` 替换为本 README 中任一任务目录即可。
+
+## 超时与耗时参考
+
+在 `frontier_eval` 中，单次评测默认超时是 `300s`。
+
+- OpenEvolve：`algorithm.oe.evaluator.timeout=300`（默认）
+- ABMCTS / ShinkaEvolve：`algorithm.evaluator_timeout_s=300`（默认）
+
+如果出现超时（尤其是 `holographic_*`），可以提高上限：
+
+```bash
+python -m frontier_eval \
+  task=unified \
+  task.benchmark=Optics/holographic_multifocus_power_ratio \
+  algorithm=openevolve \
+  algorithm.iterations=0 \
+  algorithm.oe.evaluator.timeout=600
+```
+
+大概耗时（单次评测、`algorithm.iterations=0`、CPU）：
+
+| 任务族 | 大概耗时 |
+|---|---|
+| `adaptive_*` | ~`6-15s` |
+| `phase_*` | ~`8-20s` |
+| `fiber_*` | ~`7-20s` |
+| `holographic_*` | ~`170-260s`（慢 CPU 可能超过 `300s`） |
+
+代表性任务实测：
+- `adaptive_constrained_dm_control`：~`6.3s`
+- `phase_weighted_multispot_single_plane`：~`9.3s`
+- `fiber_wdm_channel_power_allocation`：~`7.2s`
+- `holographic_multifocus_power_ratio`：~`184.7s`

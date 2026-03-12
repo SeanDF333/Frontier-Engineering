@@ -27,7 +27,7 @@ Required API:
 - `build_incident_field(problem: dict, transitions: np.ndarray)`
 - `evaluate_orders(problem: dict, intensity_x: np.ndarray, x: np.ndarray) -> dict`
 
-## Input / Output Contract
+
 ### Input
 `problem` contains:
 - grating period, wavelength, focal distance, sampling settings

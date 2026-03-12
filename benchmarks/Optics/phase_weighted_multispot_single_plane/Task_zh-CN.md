@@ -25,7 +25,7 @@
 - `solve_baseline(problem: dict) -> np.ndarray`
 - `forward_intensity(problem: dict, phase: np.ndarray) -> np.ndarray`
 
-## 输入输出约定
+
 ### `solve_baseline(problem)` 的输入
 `problem` 由 `build_problem` 生成，关键字段：
 - `x`, `y`：像素坐标（一维数组）
@@ -74,13 +74,14 @@
 - `uniform_score = 1 / (1 + (cv_spots / 0.85)^2)`
 - `efficiency_score = clip((efficiency - 0.15) / (0.80 - 0.15), 0, 1)`
 - `peak_score = clip((min_peak_ratio - 0.003) / (0.20 - 0.003), 0, 1)`
-- `score_pct = 100 * (0.25*ratio_score + 0.45*uniform_score + 0.20*efficiency_score + 0.10*peak_score)`
+- `score = 0.25*ratio_score + 0.45*uniform_score + 0.20*efficiency_score + 0.10*peak_score`
+- `score_pct = 100 * score`（兼容字段）
 
-范围：`0 ~ 100`，越高越好。
+范围：`0 ~ 1`，越高越好。
 
 ## valid 判定
 baseline 同时满足以下条件才算 valid：
-- `score_pct >= 20`
+- `score >= 0.20`
 - `efficiency >= 0.45`
 - `min_peak_ratio > 0`
 
@@ -90,4 +91,3 @@ baseline 同时满足以下条件才算 valid：
 - 按焦点误差做反馈修正
 - 加阻尼或正则提高稳定性
 - 更好的初始化（优于直接叠加）
-

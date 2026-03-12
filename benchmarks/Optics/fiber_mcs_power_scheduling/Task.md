@@ -43,7 +43,7 @@ def select_mcs_power(
     }
 ```
 
-## Input / Output Semantics
+
 
 Inputs:
 

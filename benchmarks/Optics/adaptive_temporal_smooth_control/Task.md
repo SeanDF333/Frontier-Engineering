@@ -28,7 +28,7 @@ Goal:
 - Maximize `score_0_to_1_higher_is_better`.
 - Keep output always valid under the interface contract.
 
-## Input / Output Contract
+
 
 ### Inputs
 

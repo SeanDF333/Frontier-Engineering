@@ -71,6 +71,55 @@ python benchmarks/Optics/fiber_wdm_channel_power_allocation/verification/run_val
 python benchmarks/Optics/holographic_multifocus_power_ratio/verification/evaluate.py
 ```
 
+## Frontier Eval (Unified)
+
+All 16 Optics tasks are now integrated with `frontier_eval` through `task=unified` metadata under each task folder (`benchmarks/Optics/<task>/frontier_eval`).
+
+Example:
+
+```bash
+python -m frontier_eval \
+  task=unified \
+  task.benchmark=Optics/phase_weighted_multispot_single_plane \
+  algorithm=openevolve \
+  algorithm.iterations=0
+```
+
+Replace `task.benchmark` with any task folder listed in this README.
+
+## Timeout and Runtime Reference
+
+In `frontier_eval`, the default per-evaluation timeout is `300s`.
+
+- OpenEvolve: `algorithm.oe.evaluator.timeout=300` (default)
+- ABMCTS / ShinkaEvolve: `algorithm.evaluator_timeout_s=300` (default)
+
+If a task times out (especially `holographic_*`), increase the timeout:
+
+```bash
+python -m frontier_eval \
+  task=unified \
+  task.benchmark=Optics/holographic_multifocus_power_ratio \
+  algorithm=openevolve \
+  algorithm.iterations=0 \
+  algorithm.oe.evaluator.timeout=600
+```
+
+Approximate runtime (single evaluation, `algorithm.iterations=0`, CPU):
+
+| Task Family | Approx Runtime |
+|---|---|
+| `adaptive_*` | ~`6-15s` |
+| `phase_*` | ~`8-20s` |
+| `fiber_*` | ~`7-20s` |
+| `holographic_*` | ~`170-260s` (can exceed `300s` on slower CPUs) |
+
+Representative measured tasks:
+- `adaptive_constrained_dm_control`: ~`6.3s`
+- `phase_weighted_multispot_single_plane`: ~`9.3s`
+- `fiber_wdm_channel_power_allocation`: ~`7.2s`
+- `holographic_multifocus_power_ratio`: ~`184.7s`
+
 ## Old-to-new folder mapping
 
 | Old Path | New Path |

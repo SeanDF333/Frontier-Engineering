@@ -25,7 +25,7 @@ Required API that verifier imports:
 - `solve_baseline(problem: dict) -> np.ndarray`
 - `forward_intensity(problem: dict, phase: np.ndarray) -> np.ndarray`
 
-## Input / Output Contract
+
 ### Input to `solve_baseline(problem)`
 `problem` is a dict built by `build_problem`, with key fields:
 - `x`, `y`: 1D pixel coordinates (`np.arange(N)`)
@@ -75,13 +75,14 @@ Then:
 - `uniform_score = 1 / (1 + (cv_spots / 0.85)^2)`
 - `efficiency_score = clip((efficiency - 0.15) / (0.80 - 0.15), 0, 1)`
 - `peak_score = clip((min_peak_ratio - 0.003) / (0.20 - 0.003), 0, 1)`
-- `score_pct = 100 * (0.25*ratio_score + 0.45*uniform_score + 0.20*efficiency_score + 0.10*peak_score)`
+- `score = 0.25*ratio_score + 0.45*uniform_score + 0.20*efficiency_score + 0.10*peak_score`
+- `score_pct = 100 * score` (compatibility field)
 
-Range: `0 ~ 100` (higher is better).
+Range: `0 ~ 1` (higher is better).
 
 ## Valid Criteria
 Baseline is valid if all true:
-- `score_pct >= 20`
+- `score >= 0.20`
 - `efficiency >= 0.45`
 - `min_peak_ratio > 0`
 
@@ -91,4 +92,3 @@ Typical improvements that work:
 - per-spot feedback correction
 - regularization or damping for stability
 - better initialization than direct superposition
-

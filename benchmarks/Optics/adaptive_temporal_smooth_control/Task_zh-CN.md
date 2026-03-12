@@ -27,7 +27,7 @@ def compute_dm_commands(slopes, reconstructor, control_model, prev_commands, max
 - 提升 `score_0_to_1_higher_is_better`。
 - 保持输出始终 valid。
 
-## 输入输出契约
+
 
 ### 输入
 

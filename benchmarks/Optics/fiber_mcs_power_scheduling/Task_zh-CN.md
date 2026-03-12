@@ -43,7 +43,7 @@ def select_mcs_power(
     }
 ```
 
-## 输入输出语义
+
 
 输入：
 

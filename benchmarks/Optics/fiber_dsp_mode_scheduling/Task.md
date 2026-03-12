@@ -36,7 +36,7 @@ Mode convention:
 - `0` = EDC
 - `1` = DBP
 
-## Input / Output Semantics
+
 
 `user_features` contains per-user arrays:
 

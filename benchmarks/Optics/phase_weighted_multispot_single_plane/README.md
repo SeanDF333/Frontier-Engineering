@@ -2,6 +2,7 @@
 
 ## Background
 Phase-only Fourier holography for a dense weighted spot field (7x7 spots, strongly non-uniform target power).
+Primary task score is `score` in `[0, 1]` (higher is better). Verifier also emits `score_pct` as a compatibility field.
 
 ## Structure
 

@@ -23,7 +23,7 @@
 - `solve_baseline(problem: dict) -> np.ndarray`
 - `forward_intensity(problem: dict, phase: np.ndarray) -> np.ndarray`
 
-## 输入输出约定
+
 ### 输入 `problem`
 - `x`, `y`：像素坐标
 - `aperture_amp`：孔径掩膜，形状 `(N, N)`

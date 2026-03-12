@@ -212,6 +212,28 @@
       <td>Secure Hash Algorithm 3 256-bit</td>
     </tr>
     <tr>
+      <td rowspan="3"><b>CommunicationEngineering</b></td>
+      <td><code>LDPCErrorFloor</code></td>
+      <td>已完成</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>使用重要性采样估计LDPC码错误地板，针对trapping sets</td>
+    </tr>
+    <tr>
+      <td><code>PMDSimulation</code></td>
+      <td>已完成</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>极化模色散（PMD）仿真</td>
+    </tr>
+    <tr>
+      <td><code>RayleighFadingBER</code></td>
+      <td>已完成</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>瑞利衰落信道误码率分析，使用重要性采样模拟深衰落事件</td>
+    </tr>
+    <tr>
       <td><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>已完成</td>
@@ -307,5 +329,5 @@
 
 欢迎加入我们的开发者社区！无论你是想讨论新的工程问题构想、寻找任务合作者，还是在贡献过程中遇到了技术问题，都可以在群里与我们随时交流。
 
-* 🟢 **飞书**: [点击这里加入我们的飞书讨论群](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=a1cuff9f-347a-43ce-8825-79c2a38038c6)
+* 🟢 **飞书**: [点击这里加入我们的飞书讨论群](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=21ak5858-60ba-44fd-9085-01f165c8771c)
 * 🔜 **Discord**: [点击这里加入我们的Discord社区](https://discord.gg/hxeVhZNN)

@@ -226,6 +226,28 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>Secure Hash Algorithm 3 256-bit</td>
     </tr>
     <tr>
+      <td rowspan="3"><b>CommunicationEngineering</b></td>
+      <td><code>LDPCErrorFloor</code></td>
+      <td>Completed</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>LDPC code error floor estimation using importance sampling for trapping sets</td>
+    </tr>
+    <tr>
+      <td><code>PMDSimulation</code></td>
+      <td>Completed</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>Polarization Mode Dispersion simulation with importance sampling for rare outage events</td>
+    </tr>
+    <tr>
+      <td><code>RayleighFadingBER</code></td>
+      <td>Completed</td>
+      <td>@WayneJin0918</td>
+      <td>@ahydchh</td>
+      <td>BER analysis under Rayleigh fading with importance sampling for deep fade events</td>
+    </tr>
+    <tr>
       <td><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>Completed</td>
@@ -321,6 +343,6 @@ An initial integration between some evaluation algorithms and benchmarks has bee
 ## 💬 Join the Community
 Welcome to our developer community! Whether you want to discuss new engineering problem concepts, find task collaborators, or encounter technical issues during your contribution, you can always communicate with us in the group.
 
-* 🟢 **Feishu (Lark)**: [Click here to join our Feishu discussion group](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=a1cuff9f-347a-43ce-8825-79c2a38038c6)
+* 🟢 **Feishu (Lark)**: [Click here to join our Feishu discussion group](https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=21ak5858-60ba-44fd-9085-01f165c8771c)
 
 * 🔜 **Discord**: [Click here to join our Discord community](https://discord.gg/hxeVhZNN)

@@ -63,11 +63,7 @@
     2. python -m frontier_eval task=<task_name> algorithm.iterations=0 # 与框架的适配验证。注意，请在README中说明任务注册的task_name
 2. 请注意不要包含私人信息的文件，例如:.env、API keys、IDE 配置（.vscode/）、临时文件（*.log, temp/, __pycache__/）、个人测试脚本，同时请检查提交的内容中是否包含绝对路径，避免出现复现问题和个人隐私泄露。
 
-3. **单文件闭包（Baseline，必需）**：`scripts/init.py`（以及可选的 `baseline/solution.py`）必须自包含，便于 OpenEvolve 等算法进行单文件优化。
-   - 不要 `import` 本仓库 `benchmarks/` 下的其他 Python 代码（例如任务目录下的其它 `.py` 文件）。
-   - 允许导入 Python 标准库和 `verification/requirements.txt` 中声明的第三方依赖。
-
-4. **EVOLVE-BLOCK 标记（ShinkaEvolve / ABMCTS 必需）**：被 Agent 演化（evolve）的文件（例如 `scripts/init.py`，或类似 `malloclab-handout/mm.c` 这类语言特定的 baseline）必须包含 `EVOLVE-BLOCK-START` 与 `EVOLVE-BLOCK-END` 标记，用于定义*唯一*允许修改的代码区域。
+3. **EVOLVE-BLOCK 标记（ShinkaEvolve / ABMCTS 必需）**：被 Agent 演化（evolve）的文件（例如 `scripts/init.py`，或类似 `malloclab-handout/mm.c` 这类语言特定的 baseline）必须包含 `EVOLVE-BLOCK-START` 与 `EVOLVE-BLOCK-END` 标记，用于定义*唯一*允许修改的代码区域。
    - 请保留标记行本身不变，并将标记之外的代码视为只读（CLI/I/O 契约、约束检查、评测器胶水代码等）。
    - 按语言使用正确的注释形式：
      - Python：`# EVOLVE-BLOCK-START` / `# EVOLVE-BLOCK-END`

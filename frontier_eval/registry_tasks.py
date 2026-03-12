@@ -22,6 +22,7 @@ from frontier_eval.tasks.robot_arm_cycle_time import RobotArmCycleTimeTask
 from frontier_eval.tasks.pid_tuning import PIDTuningTask
 from frontier_eval.tasks.quadruped_gait import QuadrupedGaitTask
 from frontier_eval.tasks.trimul import TriMulTask
+from frontier_eval.tasks.uav_inspection_coverage import UAVInspectionCoverageTask
 from frontier_eval.tasks.smoke import SmokeTask
 from frontier_eval.tasks.trimul import TriMulTask
 from frontier_eval.tasks.wireless_channel_simulation import HighReliableSimulationTask
@@ -45,6 +46,7 @@ _TASKS: dict[str, Type[Task]] = {
     PIDTuningTask.NAME: PIDTuningTask,
     QuadrupedGaitTask.NAME: QuadrupedGaitTask,
     DynamicObstacleNavigationTask.NAME: DynamicObstacleNavigationTask,
+    UAVInspectionCoverageTask.NAME: UAVInspectionCoverageTask,
     TriMulTask.NAME: TriMulTask,
     MLATask.NAME: MLATask,
     MallocLabTask.NAME: MallocLabTask,

@@ -286,7 +286,7 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>MBB beam 2D topology optimization (SIMP), Continuous, volume-constrained, compliance minimization</td>
     </tr>
     <tr>
-      <td rowspan="4"><b>Robotics</b></td>
+      <td rowspan="5"><b>Robotics</b></td>
       <td><code>DynamicObstacleAvoidanceNavigation</code></td>
       <td>Completed</td>
       <td>@MichaelCaoo</td>
@@ -313,6 +313,13 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>@Geniusyingmanji</td>
       <td>@ahydchh</td>
       <td>Tune a cascaded PID controller for a 2D quadrotor across multiple flight scenarios</td>
+    </tr>
+    <tr>
+      <td><code>UAVInspectionCoverageWithWind</code></td>
+      <td>Completed</td>
+      <td>@MichaelCaoo</td>
+      <td>@ahydchh</td>
+      <td>UAV inspection under wind field disturbance</td>
     </tr>
     <tr>
       <td><b>Aerodynamics</b></td>

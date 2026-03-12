@@ -272,7 +272,7 @@
       <td>连续、体积约束的合规最小化, 连续、体积约束的合规最小化</td>
     </tr>
     <tr>
-      <td rowspan="4"><b>Robotics</b></td>
+      <td rowspan="5"><b>Robotics</b></td>
       <td><code>DynamicObstacleAvoidanceNavigation</code></td>
       <td>已完成</td>
       <td>@MichaelCaoo</td>
@@ -299,6 +299,13 @@
       <td>@Geniusyingmanji</td>
       <td>@ahydchh</td>
       <td>二维四旋翼在多个飞行场景下调节级联 PID 控制器</td>
+    </tr>
+    <tr>
+      <td><code>UAVInspectionCoverageWithWind</code></td>
+      <td>已完成</td>
+      <td>@MichaelCaoo</td>
+      <td>@ahydchh</td>
+      <td>风场扰动下的无人机巡检</td>
     </tr>
     <tr>
       <td><b>Aerodynamics</b></td>

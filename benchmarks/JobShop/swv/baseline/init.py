@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -25,9 +26,24 @@ def _natural_key(name: str) -> list[object]:
 
 
 def _benchmark_json_path() -> Path:
-    # .../JobShop/<family>/baseline/init.py -> repo root
-    repo_root = Path(__file__).resolve().parents[3]
-    return repo_root / "job_shop_lib" / "benchmarking" / "benchmark_instances.json"
+    # Preferred local path in this repository (legacy layout).
+    benchmark_root = Path(__file__).resolve().parents[3]
+    local_path = benchmark_root / "job_shop_lib" / "benchmarking" / "benchmark_instances.json"
+    if local_path.is_file():
+        return local_path
+
+    # Fallback to installed package data (for environments without in-repo job_shop_lib source).
+    for entry in sys.path:
+        if not entry:
+            continue
+        pkg_path = Path(entry) / "job_shop_lib" / "benchmarking" / "benchmark_instances.json"
+        if pkg_path.is_file():
+            return pkg_path
+
+    raise FileNotFoundError(
+        "benchmark_instances.json not found. Tried local path "
+        f"{local_path} and installed-package lookup via sys.path."
+    )
 
 
 def load_benchmark_json() -> dict[str, dict[str, Any]]:

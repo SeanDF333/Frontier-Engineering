@@ -58,3 +58,76 @@
 python JobShop/ft/verification/evaluate.py --max-instances 3 --reference-time-limit 5
 python JobShop/ta/verification/evaluate.py --max-instances 2 --reference-time-limit 5
 ```
+
+## 已接入 Frontier Eval Unified
+
+已完成 7 个子任务的 unified 接入，可直接使用：
+
+- `task=unified task.benchmark=JobShop/abz`
+- `task=unified task.benchmark=JobShop/ft`
+- `task=unified task.benchmark=JobShop/la`
+- `task=unified task.benchmark=JobShop/orb`
+- `task=unified task.benchmark=JobShop/swv`
+- `task=unified task.benchmark=JobShop/ta`
+- `task=unified task.benchmark=JobShop/yn`
+
+每个家族目录下的 `frontier_eval/` 元数据会调用统一评测脚本：
+`benchmarks/JobShop/frontier_eval/evaluate_unified.py`。
+
+## Unified 运行方式（双环境）
+
+推荐使用：
+
+- `frontier_eval` 主进程：`frontier-eval-2`
+- JobShop 评测 Python：`/data_storage/chihh2311/.conda/envs/jobshop/bin/python`
+
+单个家族运行示例（以 `abz` 为例）：
+
+```bash
+/data_storage/chihh2311/.conda/envs/frontier-eval-2/bin/python -m frontier_eval \
+  task=unified \
+  task.benchmark=JobShop/abz \
+  task.runtime.python_path=/data_storage/chihh2311/.conda/envs/jobshop/bin/python \
+  task.runtime.use_conda_run=false \
+  algorithm.iterations=0
+```
+
+快速自检（7 个家族都跑 1 个实例，reference 每个实例 1 秒）：
+
+```bash
+for fam in abz ft la orb swv ta yn; do
+  /data_storage/chihh2311/.conda/envs/frontier-eval-2/bin/python -m frontier_eval \
+    task=unified \
+    task.benchmark=JobShop/${fam} \
+    task.runtime.python_path=/data_storage/chihh2311/.conda/envs/jobshop/bin/python \
+    task.runtime.use_conda_run=false \
+    +task.runtime.env.JOBSHOP_EVAL_MAX_INSTANCES=1 \
+    +task.runtime.env.JOBSHOP_REFERENCE_TIME_LIMIT=1 \
+    algorithm.iterations=0
+done
+```
+
+可用运行参数（通过 unified runtime env 传入）：
+
+- `+task.runtime.env.JOBSHOP_EVAL_MAX_INSTANCES=<N>`：最多评测前 N 个实例。
+- `+task.runtime.env.JOBSHOP_REFERENCE_TIME_LIMIT=<seconds>`：reference 每实例时间上限。
+- `+task.runtime.env.JOBSHOP_EVAL_INSTANCES='ta01 ta02'`：仅评测指定实例。
+
+## 运行时间说明（默认配置）
+
+默认不限制实例数，且 `reference-time-limit=10s`。粗略上界可按
+`实例数 x 10s + 建模/IO 开销` 估算：
+
+| 家族 | 默认实例数 | 粗略时间上界 | 说明 |
+|---|---:|---:|---|
+| FT | 3 | ~30s+ | 短 |
+| ABZ | 5 | ~50s+ | 短 |
+| ORB | 10 | ~100s+ | 中等 |
+| YN | 4 | ~40s+ | 中等（实例更稠密） |
+| SWV | 20 | ~200s+ | 较长 |
+| LA | 40 | ~400s+ | 长 |
+| TA | 80 | ~800s+ | 很长（压力测试） |
+
+其中 `LA/SWV/TA` 更容易出现长耗时，特别是 `TA`。
+建议开发调试阶段先设置 `JOBSHOP_EVAL_MAX_INSTANCES` 与较小的
+`JOBSHOP_REFERENCE_TIME_LIMIT`。

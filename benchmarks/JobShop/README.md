@@ -58,3 +58,76 @@ This folder organizes 7 classic JSSP benchmark families into a uniform training/
 python JobShop/ft/verification/evaluate.py --max-instances 3 --reference-time-limit 5
 python JobShop/ta/verification/evaluate.py --max-instances 2 --reference-time-limit 5
 ```
+
+## Integrated with Frontier Eval Unified
+
+All 7 JobShop subtasks are now integrated through unified:
+
+- `task=unified task.benchmark=JobShop/abz`
+- `task=unified task.benchmark=JobShop/ft`
+- `task=unified task.benchmark=JobShop/la`
+- `task=unified task.benchmark=JobShop/orb`
+- `task=unified task.benchmark=JobShop/swv`
+- `task=unified task.benchmark=JobShop/ta`
+- `task=unified task.benchmark=JobShop/yn`
+
+Each family-local `frontier_eval/` metadata points to the shared evaluator:
+`benchmarks/JobShop/frontier_eval/evaluate_unified.py`.
+
+## Unified run instructions (dual environment)
+
+Recommended setup:
+
+- `frontier_eval` driver process: `frontier-eval-2`
+- JobShop evaluator Python: `/data_storage/chihh2311/.conda/envs/jobshop/bin/python`
+
+Single-family example (`abz`):
+
+```bash
+/data_storage/chihh2311/.conda/envs/frontier-eval-2/bin/python -m frontier_eval \
+  task=unified \
+  task.benchmark=JobShop/abz \
+  task.runtime.python_path=/data_storage/chihh2311/.conda/envs/jobshop/bin/python \
+  task.runtime.use_conda_run=false \
+  algorithm.iterations=0
+```
+
+Quick compatibility check (all families, 1 instance each, 1s reference limit):
+
+```bash
+for fam in abz ft la orb swv ta yn; do
+  /data_storage/chihh2311/.conda/envs/frontier-eval-2/bin/python -m frontier_eval \
+    task=unified \
+    task.benchmark=JobShop/${fam} \
+    task.runtime.python_path=/data_storage/chihh2311/.conda/envs/jobshop/bin/python \
+    task.runtime.use_conda_run=false \
+    +task.runtime.env.JOBSHOP_EVAL_MAX_INSTANCES=1 \
+    +task.runtime.env.JOBSHOP_REFERENCE_TIME_LIMIT=1 \
+    algorithm.iterations=0
+done
+```
+
+Runtime controls (passed via unified runtime env):
+
+- `+task.runtime.env.JOBSHOP_EVAL_MAX_INSTANCES=<N>`: evaluate at most first N instances.
+- `+task.runtime.env.JOBSHOP_REFERENCE_TIME_LIMIT=<seconds>`: per-instance reference solver cap.
+- `+task.runtime.env.JOBSHOP_EVAL_INSTANCES='ta01 ta02'`: explicit instance subset.
+
+## Runtime notes (default settings)
+
+By default, evaluation uses all family instances with `reference-time-limit=10s`.
+A rough upper bound is `instance_count x 10s + modeling/IO overhead`:
+
+| Family | Default instance count | Rough upper bound | Note |
+|---|---:|---:|---|
+| FT | 3 | ~30s+ | short |
+| ABZ | 5 | ~50s+ | short |
+| ORB | 10 | ~100s+ | medium |
+| YN | 4 | ~40s+ | medium (denser instances) |
+| SWV | 20 | ~200s+ | long |
+| LA | 40 | ~400s+ | long |
+| TA | 80 | ~800s+ | very long stress test |
+
+`LA/SWV/TA` are the most time-consuming in practice, especially `TA`.
+For development loops, use smaller `JOBSHOP_EVAL_MAX_INSTANCES` and
+`JOBSHOP_REFERENCE_TIME_LIMIT`.

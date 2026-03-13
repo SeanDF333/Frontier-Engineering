@@ -234,6 +234,119 @@
       <td>瑞利衰落信道误码率分析，使用重要性采样模拟深衰落事件</td>
     </tr>
     <tr>
+      <td rowspan="16"><b>Optics</b></td>
+      <td><code>adaptive_constrained_dm_control</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>受约束可变形镜（DM）控制</td>
+    </tr>
+    <tr>
+      <td><code>adaptive_temporal_smooth_control</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>时序平滑与补偿质量折中</td>
+    </tr>
+    <tr>
+      <td><code>adaptive_energy_aware_control</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>能耗感知自适应光学控制</td>
+    </tr>
+    <tr>
+      <td><code>adaptive_fault_tolerant_fusion</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>容错多波前传感器融合</td>
+    </tr>
+    <tr>
+      <td><code>phase_weighted_multispot_single_plane</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>单平面加权多焦点相位 DOE</td>
+    </tr>
+    <tr>
+      <td><code>phase_fourier_pattern_holography</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>傅里叶图案全息</td>
+    </tr>
+    <tr>
+      <td><code>phase_dammann_uniform_orders</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>Dammann 光栅均匀级次优化</td>
+    </tr>
+    <tr>
+      <td><code>phase_large_scale_weighted_spot_array</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>大规模加权焦点阵列合成</td>
+    </tr>
+    <tr>
+      <td><code>fiber_wdm_channel_power_allocation</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>WDM 信道与发射功率分配</td>
+    </tr>
+    <tr>
+      <td><code>fiber_mcs_power_scheduling</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>MCS 与功率联合调度</td>
+    </tr>
+    <tr>
+      <td><code>fiber_dsp_mode_scheduling</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>接收端 DSP 模式调度</td>
+    </tr>
+    <tr>
+      <td><code>fiber_guardband_spectrum_packing</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>带保护带约束的频谱打包</td>
+    </tr>
+    <tr>
+      <td><code>holographic_multifocus_power_ratio</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>多焦点功率比控制</td>
+    </tr>
+    <tr>
+      <td><code>holographic_multiplane_focusing</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>多平面全息聚焦</td>
+    </tr>
+    <tr>
+      <td><code>holographic_multispectral_focusing</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>多光谱全息聚焦</td>
+    </tr>
+    <tr>
+      <td><code>holographic_polarization_multiplexing</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>偏振复用全息</td>
+    </tr>
+    <tr>
       <td><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>已完成</td>
@@ -284,6 +397,74 @@
       <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>供应中断场景下的 EOQ 批量优化</td>
+      <td rowspan="3"><b>PyPortfolioOpt</b></td>
+      <td><code>robust_mvo_rebalance</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>含行业/因子/换手约束的鲁棒均值方差再平衡</td>
+    </tr>
+    <tr>
+      <td><code>cvar_stress_control</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>在收益与暴露约束下进行 CVaR 压力控制配置</td>
+    </tr>
+    <tr>
+      <td><code>discrete_rebalance_mip</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>带整数手数约束的离散再平衡混合整数优化</td>
+      <td rowspan="7"><b>JobShop</b></td>
+      <td><code>abz</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 ABZ 家族（Adams, Balas, Zawack，1988）</td>
+    </tr>
+    <tr>
+      <td><code>ft</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 FT 家族（Fisher & Thompson，1963）</td>
+    </tr>
+    <tr>
+      <td><code>la</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 LA 家族（Lawrence，1984）</td>
+    </tr>
+    <tr>
+      <td><code>orb</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 ORB 家族（Applegate & Cook，1991）</td>
+    </tr>
+    <tr>
+      <td><code>swv</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 SWV 家族（Storer、Wu、Vaccari，1992）</td>
+    </tr>
+    <tr>
+      <td><code>ta</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 TA 家族（Taillard，1993）</td>
+    </tr>
+    <tr>
+      <td><code>yn</code></td>
+      <td>已完成</td>
+      <td>@ahydchh</td>
+      <td>@ahydchh</td>
+      <td>经典 JSSP 的 YN 家族（Yamada & Nakano，1992）</td>
     </tr>
     <tr>
       <td rowspan="3"><b>StructuralOptimization</b></td>

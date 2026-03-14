@@ -541,6 +541,12 @@ def evaluate(program_path: str, *, spec: UnifiedTaskSpec) -> Any:
             if isinstance(artifacts_payload, dict):
                 for key, value in artifacts_payload.items():
                     artifacts[f"user_artifact::{key}"] = value
+                    # Promote common diagnostic keys so downstream algorithms do not
+                    # need to know the unified `user_artifact::` naming convention.
+                    if key == "error_message" and "error_message" not in artifacts:
+                        artifacts["error_message"] = str(value)
+                    if key == "failure_summary" and "failure_summary" not in artifacts:
+                        artifacts["failure_summary"] = str(value)
             elif artifacts_path.exists():
                 artifacts["artifacts_json_error"] = (
                     "artifacts_json exists but is not valid JSON object"

@@ -107,6 +107,7 @@ def build_charging_profile() -> dict:
 - `plating_loss_ah`
 - `aging_loss_ah`
 - `throughput_ah`
+- `voltage_score`
 - `combined_score`
 - `valid`
 
@@ -117,6 +118,7 @@ def build_charging_profile() -> dict:
 - `time_score` 随充电时间降低而提高
 - `degradation_score` 随析锂与老化损失增大而降低
 - `thermal_score` 随峰值温度升高而降低
+- `voltage_score` 会在峰值电压超过配置中的软电压上限时下降
 
 最终分数：
 

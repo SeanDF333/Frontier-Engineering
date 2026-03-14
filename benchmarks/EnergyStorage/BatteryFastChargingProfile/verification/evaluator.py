@@ -233,10 +233,14 @@ def _simulate(currents_c: list[float], switch_soc: list[float], cfg: dict[str, A
     thermal_score = math.exp(
         -max(0.0, max_temp_c - float(scoring["thermal_reference_c"])) / float(scoring["thermal_scale_c"])
     )
+    voltage_score = math.exp(
+        -max(0.0, max_voltage_v - float(limits["max_voltage_v"])) / float(scoring["voltage_scale_v"])
+    )
     combined_score = float(scoring["score_scale"]) * (
         float(scoring["weight_time"]) * time_score
         + float(scoring["weight_degradation"]) * degradation_score
         + float(scoring["weight_thermal"]) * thermal_score
+        + float(scoring["weight_voltage"]) * voltage_score
     )
 
     return {
@@ -251,6 +255,7 @@ def _simulate(currents_c: list[float], switch_soc: list[float], cfg: dict[str, A
         "time_score": time_score,
         "degradation_score": degradation_score,
         "thermal_score": thermal_score,
+        "voltage_score": voltage_score,
         "combined_score": combined_score,
         "soft_temp_violation": 1.0 if max_temp_c > float(limits["soft_temp_c"]) else 0.0,
         "soft_voltage_violation": 1.0 if max_voltage_v > float(limits["max_voltage_v"]) else 0.0,

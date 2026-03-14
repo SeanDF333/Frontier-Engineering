@@ -81,9 +81,11 @@
     "degradation_aging_coeff": 9.0,
     "thermal_reference_c": 35.0,
     "thermal_scale_c": 7.0,
-    "weight_time": 0.55,
-    "weight_degradation": 0.3,
+    "voltage_scale_v": 0.015,
+    "weight_time": 0.5,
+    "weight_degradation": 0.25,
     "weight_thermal": 0.15,
+    "weight_voltage": 0.1,
     "score_scale": 100.0
   }
 }

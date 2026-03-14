@@ -107,6 +107,7 @@ Returned metrics include:
 - `plating_loss_ah`
 - `aging_loss_ah`
 - `throughput_ah`
+- `voltage_score`
 - `combined_score`
 - `valid`
 
@@ -117,6 +118,7 @@ For feasible profiles:
 - `time_score` increases when charge time decreases
 - `degradation_score` decreases with plating and aging loss
 - `thermal_score` decreases with higher peak temperature
+- `voltage_score` decreases when peak voltage exceeds the configured soft voltage limit
 
 The final score is:
 

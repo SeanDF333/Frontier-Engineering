@@ -242,6 +242,21 @@
       <td>瑞利衰落信道误码率分析，使用重要性采样模拟深衰落事件</td>
     </tr>
     <tr>
+      <td rowspan="2"><b>EnergyStorage</b></td>
+      <td><code>BatteryFastChargingProfile</code></td>
+      <td>已完成</td>
+      <td>@kunkun04</td>
+      <td>@ahydchh</td>
+      <td>在电压、温升和退化约束下优化锂离子电池快充电流曲线</td>
+    </tr>
+    <tr>
+      <td><code>BatteryFastChargingSPMe</code></td>
+      <td>已完成</td>
+      <td>@kunkun04</td>
+      <td>@ahydchh</td>
+      <td>在降阶 SPMe-T-Aging 风格的电化学、热、析锂和老化模型下优化分段快充策略</td>
+    </tr>
+    <tr>
       <td rowspan="16"><b>Optics</b></td>
       <td><code>adaptive_constrained_dm_control</code></td>
       <td>已完成</td>

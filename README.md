@@ -248,6 +248,21 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>BER analysis under Rayleigh fading with importance sampling for deep fade events</td>
     </tr>
     <tr>
+      <td rowspan="2"><b>EnergyStorage</b></td>
+      <td><code>BatteryFastChargingProfile</code></td>
+      <td>Completed</td>
+      <td>@kunkun04</td>
+      <td>@ahydchh</td>
+      <td>Fast-charge current-profile optimization for a lithium-ion cell under voltage, thermal, and degradation constraints</td>
+    </tr>
+    <tr>
+      <td><code>BatteryFastChargingSPMe</code></td>
+      <td>Completed</td>
+      <td>@kunkun04</td>
+      <td>@ahydchh</td>
+      <td>Staged fast-charge optimization under a reduced SPMe-T-Aging style electrochemical, thermal, plating, and aging model</td>
+    </tr>
+    <tr>
       <td rowspan="16"><b>Optics</b></td>
       <td><code>adaptive_constrained_dm_control</code></td>
       <td>Completed</td>

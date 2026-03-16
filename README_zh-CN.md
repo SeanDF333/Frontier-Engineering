@@ -116,14 +116,6 @@
       <td>登月软着陆轨迹优化</td>
     </tr>
     <tr>
-      <td><b>ElectronicDesignAutomation</b></td>
-      <td><code>IntegrationPhysicalDesignOptimization</code></td>
-      <td>开发中</td>
-      <td>@ahydchh</td>
-      <td>@ahydchh</td>
-      <td>芯片宏单元布局优化</td>
-    </tr>
-    <tr>
       <td><b>ParticlePhysics</b></td>
       <td><code>MuonTomography</code></td>
       <td>已完成</td>

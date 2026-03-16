@@ -130,14 +130,6 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>Lunar soft landing trajectory optimization</td>
     </tr>
     <tr>
-      <td><b>ElectronicDesignAutomation</b></td>
-      <td><code>IntegrationPhysicalDesignOptimization</code></td>
-      <td>In Development</td>
-      <td>@ahydchh</td>
-      <td>@ahydchh</td>
-      <td>Chip macro placement optimization</td>
-    </tr>
-    <tr>
       <td><b>ParticlePhysics</b></td>
       <td><code>MuonTomography</code></td>
       <td>Completed</td>

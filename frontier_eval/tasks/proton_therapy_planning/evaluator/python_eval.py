@@ -9,10 +9,12 @@ import json
 import shutil
 from pathlib import Path
 
+
 def _is_repo_root(path: Path) -> bool:
     if not (path / "frontier_eval").is_dir():
         return False
     return (path / "benchmarks").is_dir()
+
 
 def _find_repo_root() -> Path:
     if "FRONTIER_ENGINEERING_ROOT" in os.environ:
@@ -24,21 +26,31 @@ def _find_repo_root() -> Path:
             return parent
     return Path.cwd().resolve()
 
+
 def _tail(text: str, limit: int = 8000) -> str:
     if len(text) <= limit:
         return text
     return text[-limit:]
 
+
 def evaluate(program_path: str, *, repo_root: Path | None = None):
     start = time.time()
     repo_root = _find_repo_root() if repo_root is None else repo_root.expanduser().resolve()
-    program_path = str(Path(program_path).expanduser().resolve())
+    program_path = Path(program_path).expanduser().resolve()
 
     work_dir = Path(tempfile.mkdtemp(prefix="fe_proton_")).resolve()
     artifacts: dict[str, str] = {}
 
+    output_candidates = [work_dir / "plan.json", program_path.parent / "plan.json"]
+    output_mtimes: dict[Path, int | None] = {}
+
+    for path in output_candidates:
+        try:
+            output_mtimes[path] = path.stat().st_mtime_ns if path.exists() else None
+        except OSError:
+            output_mtimes[path] = None
+
     try:
-        
         try:
             proc = subprocess.run(
                 [sys.executable, str(program_path)],
@@ -57,15 +69,28 @@ def evaluate(program_path: str, *, repo_root: Path | None = None):
         metrics: dict[str, float] = {"combined_score": -10000.0, "valid": 0.0, "timeout": 0.0, "runtime_s": 0.0}
         metrics["program_returncode"] = float(proc.returncode)
 
-        results_path = work_dir / "plan.json"
-        if not results_path.exists():
+        results_path: Path | None = None
+        for candidate in output_candidates:
+            try:
+                if not candidate.exists():
+                    continue
+                
+                previous_mtime = output_mtimes.get(candidate)
+                current_mtime = candidate.stat().st_mtime_ns
+                
+                if previous_mtime is None or current_mtime != previous_mtime:
+                    results_path = candidate
+                    break
+            except OSError:
+                continue
+
+        if results_path is None:
             artifacts["error_message"] = "plan.json not generated"
             metrics["runtime_s"] = float(time.time() - start)
             return _wrap(metrics, artifacts)
         
         artifacts["plan.json"] = results_path.read_text(encoding="utf-8", errors="replace")
 
-        
         eval_script = (repo_root / "benchmarks" / "ParticlePhysics" / "ProtonTherapyPlanning" / "verification" / "evaluator.py").resolve()
         
         try:
@@ -92,7 +117,7 @@ def evaluate(program_path: str, *, repo_root: Path | None = None):
             eval_result = json.loads(output_lines[-1])
             if eval_result.get("status") == "success":
                 score = float(eval_result.get("score", -10000.0))
-                passed = True 
+                passed = True
             else:
                 artifacts["error_message"] = eval_result.get("message", "Evaluation failed")
         except Exception as e:
@@ -105,6 +130,7 @@ def evaluate(program_path: str, *, repo_root: Path | None = None):
         return _wrap(metrics, artifacts)
     finally:
         shutil.rmtree(work_dir, ignore_errors=True)
+
 
 def _wrap(metrics: dict[str, float], artifacts: dict[str, str]):
     try:

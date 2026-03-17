@@ -1,23 +1,22 @@
 import json
 import numpy as np
-import os
+from pathlib import Path
 
-def generate_baseline_plan():
+# EVOLVE-BLOCK-START
+def generate_baseline():
     """
-    生成一个基于启发式规则的基线质子治疗计划。
-    策略：在肿瘤内部均匀布点，但严格避开靠近脑干的危险区域。
+    Generate a heuristic baseline proton therapy plan.
+    Strategy: Uniformly place spots within CTV, strictly avoiding the OAR margin.
     """
     spots = []
     
-    # CTV (肿瘤) 参数
     c_ctv = np.array([0.0, 0.0, 50.0])
     r_ctv = 15.0
     
-    # OAR (脑干) 参数
     c_oar = np.array([0.0, 20.0, 60.0])
     r_oar = 10.0
     
-    # 在肿瘤内部生成候选网格点 (步长为 6mm，确保点数不超过 100)
+    # Candidate grid inside CTV
     xs = np.arange(-12, 13, 6)
     ys = np.arange(-12, 13, 6)
     zs = np.arange(38, 63, 6)
@@ -27,17 +26,15 @@ def generate_baseline_plan():
             for z in zs:
                 pos = np.array([x, y, z])
                 
-                # 1. 检查是否在肿瘤深处 (稍微向内收缩边界，半径设为 13)
+                # Check if inside CTV (with slight margin, r=13)
                 if np.linalg.norm(pos - c_ctv) <= 13.0:
-                    
-                    # 2. 检查距离脑干的距离
                     dist_to_oar = np.linalg.norm(pos - c_oar)
                     
-                    # 如果距离脑干太近 (半径 10 + 6mm 的安全缓冲区)，则放弃该束斑
+                    # Avoid OAR (radius 10 + 6mm safety margin)
                     if dist_to_oar < 16.0:
                         continue
                         
-                    # 3. 添加安全的束斑，赋予初始均匀权重 4.5
+                    # Assign uniform initial weight
                     spots.append({
                         "x": float(round(x, 2)),
                         "y": float(round(y, 2)),
@@ -45,21 +42,25 @@ def generate_baseline_plan():
                         "w": 4.5
                     })
     
-    # 按照任务要求，截断至最多 100 个点
+    # Max 100 spots
     spots = spots[:100]
     
-    # 组装 JSON 结构
-    plan_data = {
-        "spots": spots
-    }
-    
-    # 确保保存路径正确
-    output_path = os.path.join(os.path.dirname(__file__), 'plan.json')
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(plan_data, f, indent=2)
-        
-    print(f"Successfully generated baseline plan with {len(spots)} spots.")
-    print(f"Saved to: {output_path}")
+    return {"spots": spots}
+# EVOLVE-BLOCK-END
+
+def _output_path() -> Path:
+    # frontier_eval evaluates candidates from a temporary working directory,
+    # so the contract is to always write `plan.json` in the current cwd.
+    return Path("plan.json")
 
 if __name__ == "__main__":
-    generate_baseline_plan()
+    plan_data = generate_baseline()
+    output_path = _output_path()
+    
+    try:
+        with output_path.open("w", encoding="utf-8") as f:
+            json.dump(plan_data, f, indent=2)
+        print(f"Baseline plan successfully generated: {output_path.as_posix()}")
+        print(f"Total spots placed: {len(plan_data['spots'])}")
+    except Exception as e:
+        print(f"Failed to generate baseline plan: {str(e)}")

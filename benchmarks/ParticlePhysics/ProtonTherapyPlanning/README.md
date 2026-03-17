@@ -12,68 +12,42 @@ Proton therapy utilizes the unique "Bragg Peak" physical characteristic of high-
 
 For detailed physical and mathematical models, objective functions, and I/O formats designed for the Agent, please refer to the core task document: [Task.md](./Task.md).
 
-## 2. File Structure
+## 2. Local Run
 
-```text
-ProtonTherapyPlanning/
-├── README.md                        # This navigation document
-├── README_zh-CN.md                  # Navigation document (Chinese version)
-├── Task.md                          # [Core] Agent task description & physical model
-├── Task_zh-CN.md                    # [Core] Agent task description (Chinese version)
-├── references/                      # Domain reference materials
-│   └── constants.json               # Constants for prescription doses, coordinates, etc.
-├── verification/                    # Verification and scoring system
-│   ├── evaluator.py                 # Core scoring Python script (computes 3D dose superposition)
-│   ├── requirements.txt             # Environment dependencies (numpy)
-│   └── docker/                      
-│       └── Dockerfile               # Containerization configuration
-└── baseline/                        # Baseline solution and reference code
-    └── solution.py                  # Reference code to generate an initial baseline solution
+After preparing the `frontier-eval-2` environment, you can run the benchmark directly from the task directory:
+
+```bash
+conda activate frontier-eval-2
+cd benchmarks/ParticlePhysics/ProtonTherapyPlanning
+python baseline/solution.py
+python verification/evaluator.py plan.json
 ```
 
-## 3. Quick Start
+`verification/requirements.txt` currently only requires `numpy>=1.24.0`.
 
-You can run the verification script for this task using either a local Python environment or Docker. The script reads a JSON file containing proton beam coordinates and weights, computes the dose on a 3D grid, and outputs the final score.
+The baseline above has been verified in this repository with the following result:
 
-### Method 1: Run Locally via Python
+```json
+{"score": -2685.8873258471367, "status": "success", "metrics": {"ctv_mse": 2779.3623258471366, "oar_overdose_penalty": 0.0, "total_weight": 130.5}}
+```
 
-1. **Install Dependencies**:
-   Ensure `numpy` is installed in your environment.
-   ```bash
-   cd verification
-   pip install -r requirements.txt
-   ```
+## 3. Run with `frontier_eval`
 
-2. **Generate Baseline Solution (Optional)**:
-   Run the baseline code to generate a simulated Agent output file named `plan.json`.
-   ```bash
-   cd ../baseline
-   python solution.py
-   ```
+This task is registered in `frontier_eval` as `proton_therapy_planning`.
 
-3. **Run the Evaluator**:
-   Pass the path of the generated JSON file to the evaluator.
-   ```bash
-   cd ../verification
-   python evaluator.py ../baseline/plan.json
-   ```
+From the repository root, the standard compatibility check is:
 
-### Method 2: Run via Docker (Recommended)
+```bash
+conda activate frontier-eval-2
+python -m frontier_eval task=proton_therapy_planning algorithm=openevolve algorithm.iterations=0
+```
 
-To ensure absolute consistency of the evaluation environment, using Docker is highly recommended.
+After completing the framework-level `.env` or model configuration described in [frontier_eval/README.md](../../../frontier_eval/README.md), you can start a real search by increasing `algorithm.iterations`, for example:
 
-1. **Build the Image**:
-   Execute the build command in the `verification/docker` directory.
-   ```bash
-   cd verification/docker
-   docker build -t frontier-proton-eval -f Dockerfile ..
-   ```
-
-2. **Run the Container for Evaluation**:
-   Mount your local solution file into the container for scoring.
-   ```bash
-   docker run --rm -v $(pwd)/../../baseline/plan.json:/app/plan.json frontier-proton-eval /app/plan.json
-   ```
+```bash
+conda activate frontier-eval-2
+python -m frontier_eval task=proton_therapy_planning algorithm=openevolve algorithm.iterations=10
+```
 
 ## 4. Evaluation Metrics
 

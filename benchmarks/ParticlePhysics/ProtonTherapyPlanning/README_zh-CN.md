@@ -12,68 +12,42 @@
 
 详细的物理数学模型、目标函数以及输入输出格式，请参阅给 Agent 阅读的专用说明文档：[Task_zh-CN.md](./Task_zh-CN.md)。
 
-## 2. 文件结构
+## 2. 本地运行 (Local Run)
 
-```text
-ProtonTherapyPlanning/
-├── README.md                        # 本导航文档的英文版
-├── README_zh-CN.md                  # 本导航文档（中文版）
-├── Task.md                          # [核心] Agent 任务说明与物理模型（英文）
-├── Task_zh-CN.md                    # [核心] Agent 任务说明与物理模型（中文）
-├── references/                      # 领域参考资料
-│   └── constants.json               # 处方剂量、器官坐标等常数配置
-├── verification/                    # 验证与评分系统
-│   ├── evaluator.py                 # 核心评分 Python 脚本（计算三维剂量叠加）
-│   ├── requirements.txt             # 评测环境依赖 (numpy)
-│   └── docker/                      
-│       └── Dockerfile               # 评测环境容器化配置
-└── baseline/                        # 基线方案与参考代码
-    └── solution.py                  # 生成初始基线解的参考代码
+在准备好 `frontier-eval-2` 环境后，你可以直接在任务目录下运行基准测试：
+
+```bash
+conda activate frontier-eval-2
+cd benchmarks/ParticlePhysics/ProtonTherapyPlanning
+python baseline/solution.py
+python verification/evaluator.py plan.json
 ```
 
-## 3. 快速开始 (Quick Start)
+`verification/requirements.txt` 目前仅依赖 `numpy>=1.24.0`。
 
-你可以通过本地 Python 环境或 Docker 来运行本任务的验证脚本。验证脚本会读取包含质子束坐标与权重的 JSON 文件，并在三维网格上计算剂量，最终输出评分。
+上述基线代码已在本仓库中验证，并输出以下结果：
 
-### 方式一：本地 Python 运行
+```json
+{"score": -2685.8873258471367, "status": "success", "metrics": {"ctv_mse": 2779.3623258471366, "oar_overdose_penalty": 0.0, "total_weight": 130.5}}
+```
 
-1. **安装依赖**：
-   确保你的环境中安装了 `numpy`。
-   ```bash
-   cd verification
-   pip install -r requirements.txt
-   ```
+## 3. 使用 `frontier_eval` 运行
 
-2. **生成基线解答（可选）**：
-   运行基线代码生成一个模拟的 Agent 输出文件 `plan.json`。
-   ```bash
-   cd ../baseline
-   python solution.py
-   ```
+本任务在 `frontier_eval` 中注册为 `proton_therapy_planning`。
 
-3. **运行评分脚本**：
-   将生成的 JSON 文件路径传递给评分器。
-   ```bash
-   cd ../verification
-   python evaluator.py ../baseline/plan.json
-   ```
+在仓库根目录下，运行标准的兼容性检查命令：
 
-### 方式二：使用 Docker 运行 (推荐)
+```bash
+conda activate frontier-eval-2
+python -m frontier_eval task=proton_therapy_planning algorithm=openevolve algorithm.iterations=0
+```
 
-为了保证评测环境的绝对一致性，推荐使用 Docker 运行验证流程。
+在完成 [frontier_eval/README.md](../../../frontier_eval/README.md) 中描述的框架级 `.env` 或模型配置后，你可以通过增加 `algorithm.iterations` 来启动真实的搜索，例如：
 
-1. **构建镜像**：
-   在 `verification/docker` 目录下执行构建命令。
-   ```bash
-   cd verification/docker
-   docker build -t frontier-proton-eval -f Dockerfile ..
-   ```
-
-2. **运行容器进行评测**：
-   将本地的解答文件挂载到容器中进行评测。
-   ```bash
-   docker run --rm -v $(pwd)/../../baseline/plan.json:/app/plan.json frontier-proton-eval /app/plan.json
-   ```
+```bash
+conda activate frontier-eval-2
+python -m frontier_eval task=proton_therapy_planning algorithm=openevolve algorithm.iterations=10
+```
 
 ## 4. 评估指标
 

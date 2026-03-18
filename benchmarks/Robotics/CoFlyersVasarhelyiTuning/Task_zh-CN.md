@@ -116,4 +116,3 @@ solve(problem)
 
 本任务忠实使用了 CoFlyers 原仓公开发布的 case 参数，但执行后端是 **Python 重实现**，而不是直接调用原始 MATLAB/Simulink 运行时。
 
-<!-- AI_GENERATED -->

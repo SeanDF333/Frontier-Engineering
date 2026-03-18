@@ -361,12 +361,19 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>Polarization-multiplexed holography</td>
     </tr>
     <tr>
-      <td><b>Computer Systems</b></td>
+      <td rowspan="2"><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>Completed</td>
       <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>Dynamic memory allocation</td>
+    </tr>
+    <tr>
+      <td><code>DuckDBWorkloadOptimization</code></td>
+      <td>Completed</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>Index/materialized-view selection and query rewriting optimization on official DuckDB workloads</td>
     </tr>
     <tr>
       <td><b>EngDesign</b></td>
@@ -485,7 +492,7 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>Classical JSSP YN family (Yamada and Nakano 1992)</td>
     </tr>
     <tr>
-      <td rowspan="3"><b>StructuralOptimization</b></td>
+      <td rowspan="4"><b>StructuralOptimization</b></td>
       <td><code>ISCSO2015</code></td>
       <td>Completed</td>
       <td>@yks23</td>
@@ -505,6 +512,13 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>@Geniusyingmanji</td>
       <td>@ahydchh</td>
       <td>MBB beam 2D topology optimization (SIMP), Continuous, volume-constrained, compliance minimization</td>
+    </tr>
+    <tr>
+      <td><code>PyMOTOSIMPCompliance</code></td>
+      <td>Completed</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>pyMOTO-based 2D beam topology optimization (SIMP + OC/MMA) under a volume-fraction constraint</td>
     </tr>
     <tr>
       <td rowspan="6"><b>Robotics</b></td>
@@ -550,12 +564,19 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>Tune the original CoFlyers Vasarhelyi flocking parameters</td>
     </tr>
     <tr>
-      <td><b>Aerodynamics</b></td>
+      <td rowspan="2"><b>Aerodynamics</b></td>
       <td><code>CarAerodynamicsSensing</code></td>
       <td>Completed</td>
       <td>@LeiDQ, @llltttwww</td>
       <td>@llltttwww</td>
       <td>Sensor placement on 3D car surface for pressure field reconstruction</td>
+    </tr>
+    <tr>
+      <td><code>DawnAircraftDesignOptimization</code></td>
+      <td>Completed</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>Jointly optimize wing, fuselage, and propulsion variables under cruise/endurance/payload constraints to minimize total aircraft mass</td>
     </tr>
     <tr>
       <td><b>WirelessChannelSimulation</b></td>

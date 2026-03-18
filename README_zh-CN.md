@@ -352,12 +352,19 @@ English | [简体中文](README_zh-CN.md)
       <td>偏振复用全息</td>
     </tr>
     <tr>
-      <td><b>Computer Systems</b></td>
+      <td rowspan="2"><b>Computer Systems</b></td>
       <td><code>Malloc Lab</code></td>
       <td>已完成</td>
       <td>@ahydchh</td>
       <td>@ahydchh</td>
       <td>动态内存分配实验</td>
+    </tr>
+    <tr>
+      <td><code>DuckDBWorkloadOptimization</code></td>
+      <td>已完成</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>基于 DuckDB 官方 workload 的索引/物化视图选择与查询改写优化</td>
     </tr>
     <tr>
       <td><b>EngDesign</b></td>
@@ -476,7 +483,7 @@ English | [简体中文](README_zh-CN.md)
       <td>经典 JSSP 的 YN 家族（Yamada & Nakano，1992）</td>
     </tr>
     <tr>
-      <td rowspan="3"><b>StructuralOptimization</b></td>
+      <td rowspan="4"><b>StructuralOptimization</b></td>
       <td><code>ISCSO2015</code></td>
       <td>已完成</td>
       <td>@yks23</td>
@@ -496,6 +503,13 @@ English | [简体中文](README_zh-CN.md)
       <td>@Geniusyingmanji</td>
       <td>@ahydchh</td>
       <td>连续、体积约束的合规最小化, 连续、体积约束的合规最小化</td>
+    </tr>
+    <tr>
+      <td><code>PyMOTOSIMPCompliance</code></td>
+      <td>已完成</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>基于 pyMOTO 的二维梁拓扑优化（SIMP + OC/MMA），在体积分数约束下最小化柔度</td>
     </tr>
     <tr>
       <td rowspan="6"><b>Robotics</b></td>
@@ -541,12 +555,19 @@ English | [简体中文](README_zh-CN.md)
       <td>调优 Vasarhelyi 群飞参数</td>
     </tr>
     <tr>
-      <td><b>Aerodynamics</b></td>
+      <td rowspan="2"><b>Aerodynamics</b></td>
       <td><code>CarAerodynamicsSensing</code></td>
       <td>已完成</td>
       <td>@LeiDQ, @llltttwww</td>
       <td>@llltttwww</td>
       <td>3D 汽车表面传感器布局优化，用于压力场重建</td>
+    </tr>
+    <tr>
+      <td><code>DawnAircraftDesignOptimization</code></td>
+      <td>已完成</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>在巡航高度、续航与载荷约束下，联合优化机翼/机身/动力参数以最小化飞机总重量</td>
     </tr>
     <tr>
       <td><b>WirelessChannelSimulation</b></td>

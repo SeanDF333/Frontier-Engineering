@@ -507,7 +507,7 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>MBB beam 2D topology optimization (SIMP), Continuous, volume-constrained, compliance minimization</td>
     </tr>
     <tr>
-      <td rowspan="5"><b>Robotics</b></td>
+      <td rowspan="6"><b>Robotics</b></td>
       <td><code>DynamicObstacleAvoidanceNavigation</code></td>
       <td>Completed</td>
       <td>@MichaelCaoo</td>
@@ -543,6 +543,13 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>UAV inspection under wind field disturbance</td>
     </tr>
     <tr>
+      <td><code>CoFlyersVasarhelyiTuning</code></td>
+      <td>In Progress</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>Tune the original CoFlyers Vasarhelyi flocking parameters</td>
+    </tr>
+    <tr>
       <td><b>Aerodynamics</b></td>
       <td><code>CarAerodynamicsSensing</code></td>
       <td>Completed</td>
@@ -557,6 +564,22 @@ The table below lists the current coverage of domain tasks in the Benchmark. We 
       <td>@tonyhaohan</td>
       <td>@yks23, @ahydchh</td>
       <td>BER estimation with importance sampling for Hamming(127,120)</td>
+    </tr>
+    <tr>
+      <td><b>PowerSystems</b></td>
+      <td><code>EV2GymSmartCharging</code></td>
+      <td>Completed</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>Upstream-aligned EV smart charging</td>
+    </tr>
+    <tr>
+      <td><b>AdditiveManufacturing</b></td>
+      <td><code>DiffSimThermalControl</code></td>
+      <td>Completed</td>
+      <td>@DocZbs</td>
+      <td>@DocZbs</td>
+      <td>Study process optimization in additive manufacturing using differentiable simulation</td>
     </tr>
   </tbody>
 </table>

@@ -1,4 +1,4 @@
-PyMOTO SIMP compliance unified-task constraints:
+PyMOTO-inspired SIMP compliance unified-task constraints:
 1) Candidate file is `scripts/init.py`; keep output file contract (`temp/submission.json`) and field `density_vector`.
 2) Keep benchmark setup fixed: hard-coded cantilever load/boundary condition and volume-fraction-constrained compliance objective.
 3) Keep evaluator and metadata files unchanged (`verification/`, `frontier_eval/`, `references/problem_config.json`).

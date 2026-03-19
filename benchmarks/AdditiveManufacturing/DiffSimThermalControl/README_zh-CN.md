@@ -130,3 +130,4 @@ python -m frontier_eval \
 
 - `verification/evaluator.py` 内部包含 canonical 评分路径。
 - `baseline/result_log.txt` 保存了一次参考运行结果。
+

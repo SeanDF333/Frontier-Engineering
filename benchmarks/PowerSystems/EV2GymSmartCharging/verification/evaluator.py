@@ -308,6 +308,7 @@ def main() -> None:
     try:
         result = evaluate_candidate(args.candidate.resolve())
         metrics = {
+            "combined_score": result["score"],
             "score": result["score"],
             "valid": result["valid"],
             "runtime_s": result["runtime_s"],
@@ -322,6 +323,7 @@ def main() -> None:
     except Exception as exc:
         runtime_s = 0.0
         metrics = {
+            "combined_score": 0.0,
             "score": 0.0,
             "valid": 0.0,
             "runtime_s": runtime_s,

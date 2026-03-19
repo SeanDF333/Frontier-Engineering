@@ -131,3 +131,4 @@ If you follow the local setup used for validation here, replace `<your_env>` wit
 - `verification/evaluator.py` contains its own canonical scoring path.
 - `baseline/result_log.txt` stores one reference run output.
 - This task now uses real upstream case files rather than the earlier surrogate-only case setup.
+

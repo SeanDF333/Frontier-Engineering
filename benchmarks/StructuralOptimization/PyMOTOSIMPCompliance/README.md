@@ -1,13 +1,13 @@
 # PyMOTO SIMP Compliance
 
 This benchmark targets topology optimization for a 2D cantilever-like beam with a fixed material budget.
-The baseline is implemented with the official pyMOTO-style pipeline:
+The baseline follows a pyMOTO-inspired SIMP workflow, implemented in a portable NumPy-only form:
 
 - density filtering
 - SIMP interpolation
 - finite-element stiffness assembly
 - linear solve
-- compliance minimization with OC or MMA
+- compliance minimization with OC updates
 
 ## File Structure
 
@@ -64,8 +64,8 @@ The candidate program must write `temp/submission.json`:
 ```json
 {
   "benchmark_id": "pymoto_simp_compliance",
-  "nelx": 120,
-  "nely": 40,
+  "nelx": 50,
+  "nely": 16,
   "density_vector": [0.5, 0.5, 0.5],
   "compliance": 123.45,
   "volume_fraction": 0.5,
@@ -75,7 +75,7 @@ The candidate program must write `temp/submission.json`:
 
 Evaluator-required field:
 
-- `density_vector` (flattened length `nelx * nely`)
+- `density_vector` (flattened length `nelx * nely`, i.e., `800`)
 
 Extra fields are accepted, but scoring uses independent evaluator computation.
 
@@ -83,7 +83,7 @@ Extra fields are accepted, but scoring uses independent evaluator computation.
 
 - **Task name (frontier_eval config key)**: `pymoto_simp_compliance`
 - **Benchmark path**: `StructuralOptimization/PyMOTOSIMPCompliance`
-- **Mesh**: `120 x 40` (4800 design variables)
+- **Mesh**: `50 x 16` (800 design variables)
 - **Objective**: minimize compliance
 - **Constraint**: `mean(density) <= volfrac` with evaluator tolerance
 - **Volume fraction**: `0.5`

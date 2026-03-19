@@ -1,6 +1,6 @@
 {
   "benchmark": "Robotics/CoFlyersVasarhelyiTuning",
-  "candidate_path": "/mnt/eb20f54b-f016-4501-a5b2-5dd6afff9d90/zbs/Frontier-Engineering/benchmarks/Robotics/CoFlyersVasarhelyiTuning/scripts/init.py",
+  "candidate_path": "scripts/init.py",
   "source_repo": "https://github.com/micros-uav/CoFlyers",
   "cases": [
     {
@@ -67,10 +67,10 @@
     },
     {
       "valid": 1.0,
-      "score": 76.1794610203975,
-      "original_fitness": 0.238205389796025,
-      "coflyers_product": 0.761794610203975,
-      "phi_corr": 0.7875782573454676,
+      "score": 76.17946102039748,
+      "original_fitness": 0.23820538979602512,
+      "coflyers_product": 0.7617946102039749,
+      "phi_corr": 0.7875782573454675,
       "phi_vel": 0.9672621140807056,
       "phi_coll": 0.0,
       "phi_wall": 0.0,

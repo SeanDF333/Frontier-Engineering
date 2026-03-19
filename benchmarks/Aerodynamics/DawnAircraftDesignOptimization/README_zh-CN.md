@@ -93,3 +93,4 @@ python -m frontier_eval task=dawn_aircraft_design_optimization algorithm.iterati
 - 保持 `EVOLVE-BLOCK-START` 与 `EVOLVE-BLOCK-END` 标记不变。
 - 物理模型、约束定义和输出契约视为只读。
 - 主要修改 `solve_design()`，尝试更优设计变量组合或求解策略。
+

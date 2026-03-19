@@ -21,8 +21,8 @@ def _charge_as_fast_as_possible(port: dict[str, Any]) -> float:
 
 
 def solve(case: dict[str, Any], max_sim_calls: int = 0, simulate_fn: Any | None = None) -> dict[str, Any]:
-    # Do not change: keep the evaluation entrypoint signature and return format.
-    # You may change: improve the action policy using EV, transformer, price, and future information from `case`.
+    # DO NOT MODIFY: keep the evaluation entrypoint signature and return format.
+    # MODIFIABLE: improve the action policy using EV, transformer, price, and future information from `case`.
     del max_sim_calls, simulate_fn
 
     ports = list(case.get("ports", []))

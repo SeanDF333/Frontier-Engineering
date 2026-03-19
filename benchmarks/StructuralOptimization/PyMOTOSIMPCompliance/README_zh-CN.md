@@ -1,13 +1,13 @@
 # PyMOTO SIMP 柔度优化
 
 该任务是一个二维结构拓扑优化基准，目标是在固定体积分数约束下最小化结构柔度（compliance）。
-基线实现遵循 pyMOTO 官方示例范式：
+基线实现采用受 pyMOTO 启发的 SIMP 流程，并使用可移植的 NumPy-only 实现：
 
 - 密度滤波
 - SIMP 材料插值
 - 有限元刚度组装
 - 线性方程求解
-- 使用 OC 或 MMA 进行优化
+- 使用 OC 更新进行优化
 
 ## 目录结构
 
@@ -64,8 +64,8 @@ python verification/evaluator.py scripts/init.py
 ```json
 {
   "benchmark_id": "pymoto_simp_compliance",
-  "nelx": 120,
-  "nely": 40,
+  "nelx": 50,
+  "nely": 16,
   "density_vector": [0.5, 0.5, 0.5],
   "compliance": 123.45,
   "volume_fraction": 0.5,
@@ -75,13 +75,13 @@ python verification/evaluator.py scripts/init.py
 
 评测必需字段：
 
-- `density_vector`（长度为 `nelx * nely` 的展平密度向量）
+- `density_vector`（长度为 `nelx * nely`，即 `800` 的展平密度向量）
 
 ## 任务摘要
 
 - **frontier_eval 任务名**: `pymoto_simp_compliance`
 - **benchmark 路径**: `StructuralOptimization/PyMOTOSIMPCompliance`
-- **网格**: `120 x 40`（4800 个设计变量）
+- **网格**: `50 x 16`（800 个设计变量）
 - **目标**: 最小化柔度
 - **约束**: `mean(density) <= volfrac`（评测器带容差）
 - **体积分数**: `0.5`

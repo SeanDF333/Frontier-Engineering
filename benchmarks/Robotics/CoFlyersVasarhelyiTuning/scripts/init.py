@@ -27,7 +27,7 @@ PARAMETER_KEYS = [
     "a_shill",
 ]
 
-# Do not change: these bounds reflect the physical and numerical ranges of the original CoFlyers parameters, and the evaluator relies on them for clipping and validation.
+# DO NOT MODIFY: these bounds reflect the physical and numerical ranges of the original CoFlyers parameters, and the evaluator relies on them for clipping and validation.
 PARAMETER_BOUNDS = {
     "r_rep_0": (0.05, 4.0),
     "p_rep": (0.01, 2.0),
@@ -43,7 +43,7 @@ PARAMETER_BOUNDS = {
 }
 
 
-# Do not change: both the evaluator and the baseline rely on the same original case list.
+# DO NOT MODIFY: both the evaluator and the baseline rely on the same original case list.
 def load_reference_cases() -> dict[str, Any]:
     candidates = [
         Path(__file__).resolve().parent.parent / "references" / "coflyers_cases.json",
@@ -55,7 +55,7 @@ def load_reference_cases() -> dict[str, Any]:
     raise FileNotFoundError("references/coflyers_cases.json not found")
 
 
-# Do not change: the returned schema must remain compatible with `verification/evaluator.py`.
+# DO NOT MODIFY: the returned schema must remain compatible with `verification/evaluator.py`.
 def merge_and_clip_params(baseline_params: dict[str, float], updates: dict[str, Any] | None) -> dict[str, float]:
     merged = {key: float(baseline_params[key]) for key in baseline_params}
     if updates:
@@ -66,7 +66,7 @@ def merge_and_clip_params(baseline_params: dict[str, float], updates: dict[str, 
     return merged
 
 
-# You may change: this defines the most conservative reference solution—directly return the case parameters from the original CoFlyers repository.
+# MODIFIABLE: this defines the most conservative reference solution—directly return the case parameters from the original CoFlyers repository.
 def baseline_solve(problem: dict[str, Any]) -> dict[str, Any]:
     baseline_params = problem["baseline_params"]
     return {
@@ -75,7 +75,7 @@ def baseline_solve(problem: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-# You may change: you can locally tune `problem["baseline_params"]` here and return improved `params`.
+# MODIFIABLE: you can locally tune `problem["baseline_params"]` here and return improved `params`.
 def solve(problem: dict[str, Any]) -> dict[str, Any]:
     return baseline_solve(problem)
 

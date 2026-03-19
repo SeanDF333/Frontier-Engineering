@@ -25,8 +25,8 @@ def _sigmoid(value: float) -> float:
     return exp_pos / (1.0 + exp_pos)
 
 
-# Do not change: the evaluator relies on this entrypoint to load the real case list as specified.
-# You may change: the case construction details, but the returned fields must remain compatible.
+# DO NOT MODIFY: the evaluator relies on this entrypoint to load the real case list as specified.
+# MODIFIABLE: the case construction details, but the returned fields must remain compatible.
 def load_cases(case_file: str | Path | None = None) -> list[dict[str, Any]]:
     if case_file is None:
         case_file = Path(__file__).resolve().parent.parent / "references" / "cases.json"
@@ -161,8 +161,8 @@ def _expand_controls(knots: list[float], weights: list[list[tuple[int, float]]])
     return powers
 
 
-# Do not change: this function projects candidate control points into the feasible region, and the evaluator assumes its output satisfies the constraints.
-# You may change: the projection strategy, clipping order, and ramp-handling details.
+# DO NOT MODIFY: this function projects candidate control points into the feasible region, and the evaluator assumes its output satisfies the constraints.
+# MODIFIABLE: the projection strategy, clipping order, and ramp-handling details.
 def project_params(params: list[float], case: dict[str, Any]) -> list[float]:
     ramp_limit = float(case["ramp_limit"])
     projected: list[float] = []
@@ -175,8 +175,8 @@ def project_params(params: list[float], case: dict[str, Any]) -> list[float]:
     return projected
 
 
-# Do not change: `simulate(params, case)` is the core interface used by the evaluator; the function signature and main return fields must remain unchanged.
-# You may change: the thermal surrogate model, loss design, numerical stabilization, and internal implementation.
+# DO NOT MODIFY: `simulate(params, case)` is the core interface used by the evaluator; the function signature and main return fields must remain unchanged.
+# MODIFIABLE: the thermal surrogate model, loss design, numerical stabilization, and internal implementation.
 def simulate(params: list[float], case: dict[str, Any]) -> dict[str, Any]:
     control_knots = int(case["control_knots"])
     knots = [float(value) for value in params]
@@ -319,18 +319,18 @@ def _adam_optimize(case: dict[str, Any], *, max_sim_calls: int, simulate_fn: Sim
     }
 
 
-# Do not change: the baseline interface is used to generate the standard reference result, and its function signature must remain unchanged.
-# You may change: the baseline default hyperparameters and internal optimizer choice.
+# DO NOT MODIFY: the baseline interface is used to generate the standard reference result, and its function signature must remain unchanged.
+# MODIFIABLE: the baseline default hyperparameters and internal optimizer choice.
 def baseline_solve(case: dict[str, Any], max_sim_calls: int = 24, simulate_fn: Simulator | None = None) -> dict[str, Any]:
     simulator = simulate if simulate_fn is None else simulate_fn
     return _adam_optimize(case, max_sim_calls=max_sim_calls, simulate_fn=simulator, step_size=0.06)
 
 
 # EVOLVE-BLOCK-START
-# You may change: adjust the candidate optimization strategy only within this region, such as the learning-rate schedule, line search, or additional projection.
+# MODIFIABLE: adjust the candidate optimization strategy only within this region, such as the learning-rate schedule, line search, or additional projection.
 
-# Do not change: `solve(case, max_sim_calls=..., simulate_fn=...)` is the unified evaluation entrypoint, and its function signature must remain unchanged.
-# You may change: the optimization loop, initialization, step-size strategy, and constraint projection inside the EVOLVE-BLOCK.
+# DO NOT MODIFY: `solve(case, max_sim_calls=..., simulate_fn=...)` is the unified evaluation entrypoint, and its function signature must remain unchanged.
+# MODIFIABLE: the optimization loop, initialization, step-size strategy, and constraint projection inside the EVOLVE-BLOCK.
 def solve(case: dict[str, Any], max_sim_calls: int = 24, simulate_fn: Simulator | None = None) -> dict[str, Any]:
     simulator = simulate if simulate_fn is None else simulate_fn
     return _adam_optimize(case, max_sim_calls=max_sim_calls, simulate_fn=simulator, step_size=0.06)

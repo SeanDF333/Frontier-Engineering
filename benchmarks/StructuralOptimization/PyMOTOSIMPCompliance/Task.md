@@ -13,19 +13,19 @@ This is a classical topology optimization setting used in mechanical and structu
 - improved stiffness under given loads with limited material
 - practical trade-off between structural performance and manufacturing cost
 
-The task is aligned with density-based SIMP optimization workflows in pyMOTO.
+The task is aligned with density-based SIMP optimization workflows inspired by pyMOTO.
 
 ## 3. Design Variables
 
 Let:
 
-- `nelx = 120`
-- `nely = 40`
+- `nelx = 50`
+- `nely = 16`
 
 The design variable is the flattened density vector:
 
 ```text
-density_vector in R^(nelx * nely) = R^4800
+density_vector in R^(nelx * nely) = R^800
 ```
 
 Each element density is clipped by evaluator into:
@@ -89,7 +89,7 @@ Inside `scripts/init.py`, agents may optimize strategy-level behavior, for examp
 - density update policy
 - filter choice/usage within allowed scope
 - step-size or iteration schedule
-- OC/MMA usage strategy
+- OC update strategy and schedule
 
 Core evaluator interfaces and benchmark metadata are read-only by task constraints.
 

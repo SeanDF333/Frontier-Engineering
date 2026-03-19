@@ -1,4 +1,4 @@
-"""Evaluator for PyMOTO SIMP compliance benchmark."""
+"""Evaluator for PyMOTOSIMPCompliance (portable NumPy-only version)."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-import pymoto as pym
+
 
 VOL_TOL = 1e-3
 
@@ -39,9 +39,9 @@ def _truncate_middle(text: str, limit: int = 200_000) -> str:
     return text[:keep] + f"\n\n[... truncated {omitted} chars ...]\n\n" + text[-keep:]
 
 
-def _safe_float(value: Any, default: float = 0.0) -> float:
+def _safe_float(v: Any, default: float = 0.0) -> float:
     try:
-        return float(value)
+        return float(v)
     except Exception:
         return float(default)
 
@@ -51,82 +51,163 @@ def _load_problem_config(repo_root: Path) -> dict[str, Any]:
         repo_root / "benchmarks" / "StructuralOptimization" / "PyMOTOSIMPCompliance" / "references" / "problem_config.json",
         repo_root / "StructuralOptimization" / "PyMOTOSIMPCompliance" / "references" / "problem_config.json",
     ]
-    for path in candidates:
-        if path.is_file():
-            return json.loads(path.read_text(encoding="utf-8"))
-    raise FileNotFoundError(f"problem_config.json not found. Searched: {[str(p) for p in candidates]}")
+    for p in candidates:
+        if p.is_file():
+            return json.loads(p.read_text(encoding="utf-8"))
+    raise FileNotFoundError("problem_config.json not found")
 
 
-def _build_domain_boundary_force(problem: dict[str, Any]) -> tuple[pym.VoxelDomain, np.ndarray, np.ndarray]:
-    domain = pym.VoxelDomain(int(problem["nelx"]), int(problem["nely"]))
-
-    left_nodes = domain.nodes[0, :].flatten()
-    boundary_dofs = np.concatenate([left_nodes * 2, left_nodes * 2 + 1]).astype(int)
-
-    force = np.zeros(domain.nnodes * 2, dtype=float)
-    load_node = int(domain.nodes[int(problem["nelx"]), int(problem["nely"] // 2), 0])
-    load_dof = 2 * load_node + int(problem.get("force_direction", 1))
-    force[load_dof] = float(problem.get("force_magnitude", 1.0))
-
-    return domain, boundary_dofs, force
-
-
-def _compute_compliance(density: np.ndarray, problem: dict[str, Any]) -> float:
-    domain, boundary_dofs, force = _build_domain_boundary_force(problem)
-
-    sx = pym.Signal("x_eval", state=density.flatten())
-    with pym.Network() as func:
-        simp = pym.MathExpression(
-            expression=f"{problem['Emin']} + {problem['E0'] - problem['Emin']}*inp0^{problem['penal']}"
-        )(sx)
-        stiffness = pym.AssembleStiffness(
-            domain=domain,
-            bc=boundary_dofs,
-            e_modulus=1.0,
-            poisson_ratio=float(problem["nu"]),
-        )(simp)
-        displacement = pym.LinSolve(symmetric=True, positive_definite=True)(stiffness, force)
-        compliance = pym.EinSum(expression="i,i->")(displacement, force)
-
-    func.response()
-    return float(compliance.state)
+def _element_stiffness_matrix(nu: float) -> np.ndarray:
+    k = np.array(
+        [
+            0.5 - nu / 6.0,
+            0.125 + nu / 8.0,
+            -0.25 - nu / 12.0,
+            -0.125 + 3.0 * nu / 8.0,
+            -0.25 + nu / 12.0,
+            -0.125 - nu / 8.0,
+            nu / 6.0,
+            0.125 - 3.0 * nu / 8.0,
+        ],
+        dtype=float,
+    )
+    ke = (1.0 / (1.0 - nu**2)) * np.array(
+        [
+            [k[0], k[1], k[2], k[3], k[4], k[5], k[6], k[7]],
+            [k[1], k[0], k[7], k[6], k[5], k[4], k[3], k[2]],
+            [k[2], k[7], k[0], k[5], k[6], k[3], k[4], k[1]],
+            [k[3], k[6], k[5], k[0], k[7], k[2], k[1], k[4]],
+            [k[4], k[5], k[6], k[7], k[0], k[1], k[2], k[3]],
+            [k[5], k[4], k[3], k[2], k[1], k[0], k[7], k[6]],
+            [k[6], k[3], k[4], k[1], k[2], k[7], k[0], k[5]],
+            [k[7], k[2], k[1], k[4], k[3], k[6], k[5], k[0]],
+        ],
+        dtype=float,
+    )
+    return ke
 
 
-def _evaluate_density(density_vector: list[float], problem: dict[str, Any]) -> dict[str, Any]:
-    nelx = int(problem["nelx"])
-    nely = int(problem["nely"])
-    rho_min = float(problem.get("rho_min", 1e-3))
+def _fem_solve_dense(nelx: int, nely: int, x: np.ndarray, cfg: dict[str, Any]) -> np.ndarray:
+    e0 = float(cfg["E0"])
+    emin = float(cfg["Emin"])
+    penal = float(cfg["penal"])
+    nu = float(cfg["nu"])
+    force_mag = float(cfg.get("force_magnitude", -1.0))
+    if abs(force_mag) < 1e-12:
+        force_mag = -1.0
+
+    ke = _element_stiffness_matrix(nu)
+    ndof = 2 * (nelx + 1) * (nely + 1)
+    k_global = np.zeros((ndof, ndof), dtype=float)
+
+    for elx in range(nelx):
+        for ely in range(nely):
+            n1 = elx * (nely + 1) + ely
+            n2 = (elx + 1) * (nely + 1) + ely
+            edof = np.array(
+                [
+                    2 * n1,
+                    2 * n1 + 1,
+                    2 * n2,
+                    2 * n2 + 1,
+                    2 * n2 + 2,
+                    2 * n2 + 3,
+                    2 * n1 + 2,
+                    2 * n1 + 3,
+                ],
+                dtype=int,
+            )
+            ee = emin + (x[ely, elx] ** penal) * (e0 - emin)
+            k_global[np.ix_(edof, edof)] += ee * ke
+
+    f = np.zeros(ndof, dtype=float)
+    load_node = nelx * (nely + 1) + (nely // 2)
+    load_dof = 2 * load_node + int(cfg.get("force_direction", 1))
+    f[load_dof] = force_mag
+
+    fixed = []
+    for j in range(nely + 1):
+        node = j
+        fixed.extend([2 * node, 2 * node + 1])
+    fixed = np.array(sorted(set(fixed)), dtype=int)
+    free = np.setdiff1d(np.arange(ndof, dtype=int), fixed)
+
+    k_ff = k_global[np.ix_(free, free)]
+    f_f = f[free]
+
+    u = np.zeros(ndof, dtype=float)
+    reg = 1e-9 * np.eye(k_ff.shape[0], dtype=float)
+    u[free] = np.linalg.solve(k_ff + reg, f_f)
+    return u
+
+
+def _compliance(nelx: int, nely: int, x: np.ndarray, u: np.ndarray, cfg: dict[str, Any]) -> float:
+    e0 = float(cfg["E0"])
+    emin = float(cfg["Emin"])
+    penal = float(cfg["penal"])
+    nu = float(cfg["nu"])
+    ke = _element_stiffness_matrix(nu)
+
+    c = 0.0
+    for elx in range(nelx):
+        for ely in range(nely):
+            n1 = elx * (nely + 1) + ely
+            n2 = (elx + 1) * (nely + 1) + ely
+            edof = np.array(
+                [
+                    2 * n1,
+                    2 * n1 + 1,
+                    2 * n2,
+                    2 * n2 + 1,
+                    2 * n2 + 2,
+                    2 * n2 + 3,
+                    2 * n1 + 2,
+                    2 * n1 + 3,
+                ],
+                dtype=int,
+            )
+            ue = u[edof]
+            ce = float(ue @ ke @ ue)
+            ee = emin + (x[ely, elx] ** penal) * (e0 - emin)
+            c += ee * ce
+    return float(c)
+
+
+def _evaluate_density(density_vector: list[float], cfg: dict[str, Any]) -> dict[str, Any]:
+    nelx = int(cfg["nelx"])
+    nely = int(cfg["nely"])
+    rho_min = float(cfg.get("rho_min", 1e-9))
 
     arr = np.asarray(density_vector, dtype=float)
-    expected_len = nelx * nely
-    if arr.size != expected_len:
+    expected = nelx * nely
+    if arr.size != expected:
         return {
             "compliance": float("inf"),
             "volume_fraction": 0.0,
             "feasible": False,
-            "error": f"Expected {expected_len} densities, got {arr.size}",
+            "error": f"Expected {expected} values, got {arr.size}",
         }
-
     if not np.all(np.isfinite(arr)):
         return {
             "compliance": float("inf"),
             "volume_fraction": 0.0,
             "feasible": False,
-            "error": "Density vector contains non-finite values",
+            "error": "density contains non-finite values",
         }
 
-    density = np.clip(arr.reshape((nely, nelx)), rho_min, 1.0)
-    volume_fraction = float(np.mean(density))
-    feasible = bool(volume_fraction <= float(problem["volfrac"]) + float(VOL_TOL))
+    x = np.clip(arr.reshape((nely, nelx)), rho_min, 1.0)
+    volume_fraction = float(np.mean(x))
+    feasible = bool(volume_fraction <= float(cfg["volfrac"]) + VOL_TOL)
 
     try:
-        compliance = _compute_compliance(density, problem)
+        u = _fem_solve_dense(nelx, nely, x, cfg)
+        compliance = _compliance(nelx, nely, x, u, cfg)
     except Exception as exc:
         return {
             "compliance": float("inf"),
             "volume_fraction": volume_fraction,
             "feasible": False,
-            "error": f"Compliance evaluation failed: {exc}",
+            "error": f"FEM/compliance failed: {exc}",
         }
 
     return {
@@ -134,120 +215,6 @@ def _evaluate_density(density_vector: list[float], problem: dict[str, Any]) -> d
         "volume_fraction": volume_fraction,
         "feasible": feasible,
     }
-
-
-def evaluate(program_path: str, *, repo_root: Path | None = None, timeout_s: float = 300.0) -> Any:
-    start_s = time.time()
-    repo = _find_repo_root() if repo_root is None else repo_root.resolve()
-    benchmark_dir = (repo / "benchmarks" / "StructuralOptimization" / "PyMOTOSIMPCompliance").resolve()
-
-    metrics: dict[str, float] = {
-        "combined_score": 0.0,
-        "valid": 0.0,
-        "runtime_s": 0.0,
-        "timeout": 0.0,
-    }
-    artifacts: dict[str, Any] = {
-        "benchmark_dir": str(benchmark_dir),
-        "candidate_program": str(Path(program_path).expanduser().resolve()),
-    }
-
-    problem = _load_problem_config(repo)
-
-    uniform_density = np.full(int(problem["nelx"] * problem["nely"]), float(problem["volfrac"]), dtype=float)
-    baseline_eval = _evaluate_density(uniform_density.tolist(), problem)
-    baseline_compliance = _safe_float(baseline_eval.get("compliance"), default=float("inf"))
-
-    candidate_program = Path(program_path).expanduser().resolve()
-    if not candidate_program.is_file():
-        artifacts["error_message"] = f"Candidate program not found: {candidate_program}"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-
-    submission_path = benchmark_dir / "temp" / "submission.json"
-    submission_path.parent.mkdir(parents=True, exist_ok=True)
-    if submission_path.is_file():
-        submission_path.unlink()
-
-    cmd = [sys.executable, str(candidate_program)]
-    try:
-        proc = subprocess.run(
-            cmd,
-            cwd=str(benchmark_dir),
-            capture_output=True,
-            text=True,
-            timeout=max(1.0, float(timeout_s)),
-            env=os.environ.copy(),
-        )
-    except subprocess.TimeoutExpired as exc:
-        metrics["timeout"] = 1.0
-        artifacts["error_message"] = f"Candidate timed out: {exc}"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-    except Exception as exc:
-        artifacts["error_message"] = f"Failed to run candidate: {exc}"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-
-    artifacts["candidate_stdout"] = _tail(proc.stdout)
-    artifacts["candidate_stderr"] = _tail(proc.stderr)
-    artifacts["candidate_stdout_full"] = _truncate_middle(proc.stdout)
-    artifacts["candidate_stderr_full"] = _truncate_middle(proc.stderr)
-    metrics["candidate_returncode"] = float(proc.returncode)
-
-    if proc.returncode != 0:
-        artifacts["error_message"] = f"Candidate exited with code {proc.returncode}"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-
-    if not submission_path.is_file():
-        artifacts["error_message"] = f"Missing submission file: {submission_path}"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-
-    try:
-        submission = json.loads(submission_path.read_text(encoding="utf-8"))
-    except Exception as exc:
-        artifacts["error_message"] = f"Invalid submission JSON: {exc}"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-
-    density_vector = submission.get("density_vector")
-    if not isinstance(density_vector, list):
-        artifacts["error_message"] = "submission.json must contain list field `density_vector`"
-        metrics["runtime_s"] = float(time.time() - start_s)
-        return _wrap(metrics, artifacts)
-
-    eval_result = _evaluate_density(density_vector, problem)
-    compliance = _safe_float(eval_result.get("compliance"), default=float("inf"))
-    volume_fraction = _safe_float(eval_result.get("volume_fraction"), default=0.0)
-    feasible = bool(eval_result.get("feasible", False))
-
-    metrics["compliance"] = compliance
-    metrics["volume_fraction"] = volume_fraction
-    metrics["feasible"] = 1.0 if feasible else 0.0
-    metrics["baseline_uniform_compliance"] = baseline_compliance
-
-    if feasible and np.isfinite(compliance) and compliance > 0 and np.isfinite(baseline_compliance) and baseline_compliance > 0:
-        ratio = baseline_compliance / compliance
-        metrics["score_ratio"] = float(ratio)
-        metrics["combined_score"] = float(ratio)
-        metrics["valid"] = 1.0
-    else:
-        metrics["score_ratio"] = 0.0
-        metrics["combined_score"] = 0.0
-        metrics["valid"] = 0.0
-
-    if "error" in eval_result:
-        artifacts["error_message"] = str(eval_result["error"])
-
-    artifacts["submission_path"] = str(submission_path)
-    artifacts["benchmark_id"] = str(submission.get("benchmark_id", ""))
-    artifacts["reported_compliance"] = submission.get("compliance")
-    artifacts["reported_volume_fraction"] = submission.get("volume_fraction")
-
-    metrics["runtime_s"] = float(time.time() - start_s)
-    return _wrap(metrics, artifacts)
 
 
 def _wrap(metrics: dict[str, float], artifacts: dict[str, Any]) -> Any:
@@ -258,20 +225,129 @@ def _wrap(metrics: dict[str, float], artifacts: dict[str, Any]) -> Any:
     return EvaluationResult(metrics=metrics, artifacts=artifacts)
 
 
+def evaluate(program_path: str, *, repo_root: Path | None = None, timeout_s: float = 300.0) -> Any:
+    start_s = time.time()
+    repo = _find_repo_root() if repo_root is None else repo_root.resolve()
+    bench = (repo / "benchmarks" / "StructuralOptimization" / "PyMOTOSIMPCompliance").resolve()
+
+    metrics: dict[str, float] = {
+        "combined_score": 0.0,
+        "valid": 0.0,
+        "runtime_s": 0.0,
+        "timeout": 0.0,
+    }
+    artifacts: dict[str, Any] = {
+        "benchmark_dir": str(bench),
+        "candidate_program": str(Path(program_path).expanduser().resolve()),
+    }
+
+    cfg = _load_problem_config(repo)
+
+    uniform = np.full(int(cfg["nelx"] * cfg["nely"]), float(cfg["volfrac"]), dtype=float)
+    base_eval = _evaluate_density(uniform.tolist(), cfg)
+    base_c = _safe_float(base_eval.get("compliance"), float("inf"))
+
+    candidate = Path(program_path).expanduser().resolve()
+    if not candidate.is_file():
+        artifacts["error_message"] = f"Candidate program not found: {candidate}"
+        metrics["runtime_s"] = float(time.time() - start_s)
+        return _wrap(metrics, artifacts)
+
+    sub_path = bench / "temp" / "submission.json"
+    sub_path.parent.mkdir(parents=True, exist_ok=True)
+    if sub_path.exists():
+        sub_path.unlink()
+
+    cmd = [sys.executable, str(candidate)]
+    try:
+        proc = subprocess.run(
+            cmd,
+            cwd=str(bench),
+            capture_output=True,
+            text=True,
+            timeout=max(1.0, float(timeout_s)),
+            env=os.environ.copy(),
+        )
+    except subprocess.TimeoutExpired as exc:
+        metrics["timeout"] = 1.0
+        artifacts["error_message"] = f"candidate timeout: {exc}"
+        metrics["runtime_s"] = float(time.time() - start_s)
+        return _wrap(metrics, artifacts)
+
+    artifacts["candidate_stdout"] = _tail(proc.stdout)
+    artifacts["candidate_stderr"] = _tail(proc.stderr)
+    artifacts["candidate_stdout_full"] = _truncate_middle(proc.stdout)
+    artifacts["candidate_stderr_full"] = _truncate_middle(proc.stderr)
+    metrics["candidate_returncode"] = float(proc.returncode)
+
+    if proc.returncode != 0:
+        artifacts["error_message"] = f"candidate exited with code {proc.returncode}"
+        metrics["runtime_s"] = float(time.time() - start_s)
+        return _wrap(metrics, artifacts)
+
+    if not sub_path.is_file():
+        artifacts["error_message"] = f"missing submission file: {sub_path}"
+        metrics["runtime_s"] = float(time.time() - start_s)
+        return _wrap(metrics, artifacts)
+
+    try:
+        submission = json.loads(sub_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        artifacts["error_message"] = f"invalid submission JSON: {exc}"
+        metrics["runtime_s"] = float(time.time() - start_s)
+        return _wrap(metrics, artifacts)
+
+    density_vector = submission.get("density_vector")
+    if not isinstance(density_vector, list):
+        artifacts["error_message"] = "submission must contain list field `density_vector`"
+        metrics["runtime_s"] = float(time.time() - start_s)
+        return _wrap(metrics, artifacts)
+
+    eval_result = _evaluate_density(density_vector, cfg)
+    comp = _safe_float(eval_result.get("compliance"), float("inf"))
+    vfrac = _safe_float(eval_result.get("volume_fraction"), 0.0)
+    feasible = bool(eval_result.get("feasible", False))
+
+    metrics["compliance"] = comp
+    metrics["volume_fraction"] = vfrac
+    metrics["feasible"] = 1.0 if feasible else 0.0
+    metrics["baseline_uniform_compliance"] = base_c
+
+    if feasible and np.isfinite(comp) and comp > 0.0 and np.isfinite(base_c) and base_c > 0.0:
+        score = float(base_c / comp)
+        metrics["combined_score"] = score
+        metrics["score_ratio"] = score
+        metrics["valid"] = 1.0
+    else:
+        metrics["combined_score"] = 0.0
+        metrics["score_ratio"] = 0.0
+        metrics["valid"] = 0.0
+
+    if "error" in eval_result:
+        artifacts["error_message"] = str(eval_result["error"])
+
+    artifacts["submission_path"] = str(sub_path)
+    artifacts["reported_compliance"] = submission.get("compliance")
+    artifacts["reported_volume_fraction"] = submission.get("volume_fraction")
+
+    metrics["runtime_s"] = float(time.time() - start_s)
+    return _wrap(metrics, artifacts)
+
+
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Evaluate a PyMOTO SIMP candidate program")
+    parser = argparse.ArgumentParser(description="Evaluate a PyMOTOSIMPCompliance candidate")
     parser.add_argument("program_path", help="Path to candidate program")
-    parser.add_argument("--timeout-s", type=float, default=300.0, help="Subprocess timeout")
-    parser.add_argument("--metrics-out", type=str, default="", help="Optional metrics JSON output path")
-    parser.add_argument("--artifacts-out", type=str, default="", help="Optional artifacts JSON output path")
-    parser.add_argument("--stdout-out", type=str, default="", help="Optional candidate stdout path")
-    parser.add_argument("--stderr-out", type=str, default="", help="Optional candidate stderr path")
-    parser.add_argument("--run-meta-out", type=str, default="", help="Optional run metadata output path")
+    parser.add_argument("--timeout-s", type=float, default=300.0)
+    parser.add_argument("--metrics-out", default="")
+    parser.add_argument("--artifacts-out", default="")
+    parser.add_argument("--stdout-out", default="")
+    parser.add_argument("--stderr-out", default="")
+    parser.add_argument("--run-meta-out", default="")
     args = parser.parse_args()
 
     result = evaluate(args.program_path, timeout_s=float(args.timeout_s))
@@ -290,19 +366,22 @@ def main() -> int:
     payload.update({k: v for k, v in metrics.items() if k not in payload})
 
     if args.stdout_out:
-        stdout_text = str(artifacts.get("candidate_stdout_full", artifacts.get("candidate_stdout", "")))
-        Path(args.stdout_out).write_text(stdout_text, encoding="utf-8", errors="replace")
-
+        Path(args.stdout_out).write_text(
+            str(artifacts.get("candidate_stdout_full", artifacts.get("candidate_stdout", ""))),
+            encoding="utf-8",
+            errors="replace",
+        )
     if args.stderr_out:
-        stderr_text = str(artifacts.get("candidate_stderr_full", artifacts.get("candidate_stderr", "")))
-        Path(args.stderr_out).write_text(stderr_text, encoding="utf-8", errors="replace")
+        Path(args.stderr_out).write_text(
+            str(artifacts.get("candidate_stderr_full", artifacts.get("candidate_stderr", ""))),
+            encoding="utf-8",
+            errors="replace",
+        )
 
     if args.metrics_out:
         _write_json(Path(args.metrics_out), payload)
-
     if args.artifacts_out:
         _write_json(Path(args.artifacts_out), artifacts)
-
     if args.run_meta_out:
         lines = [
             f"candidate={Path(args.program_path).expanduser().resolve()}",
@@ -313,7 +392,7 @@ def main() -> int:
         Path(args.run_meta_out).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(json.dumps(payload, ensure_ascii=False))
-    return 0
+    return 0 if payload.get("valid", 0.0) > 0 else 1
 
 
 if __name__ == "__main__":

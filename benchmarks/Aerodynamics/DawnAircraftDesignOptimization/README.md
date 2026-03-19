@@ -93,3 +93,4 @@ The evolvable file is `scripts/init.py`.
 - Keep the `EVOLVE-BLOCK-START` and `EVOLVE-BLOCK-END` markers unchanged.
 - Treat physics model, constraint definitions, and output contract as read-only.
 - Modify `solve_design()` to explore better search or optimization strategies.
+

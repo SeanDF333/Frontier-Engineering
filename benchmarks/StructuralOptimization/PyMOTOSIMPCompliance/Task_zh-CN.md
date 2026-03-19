@@ -13,19 +13,19 @@
 - 在给定载荷下提升结构刚度
 - 在性能与材料成本之间做工程权衡
 
-任务实现与 pyMOTO 的密度法拓扑优化范式一致。
+任务实现采用受 pyMOTO 启发的密度法拓扑优化范式。
 
 ## 3. 设计变量
 
 设：
 
-- `nelx = 120`
-- `nely = 40`
+- `nelx = 50`
+- `nely = 16`
 
 提交变量为展平密度向量：
 
 ```text
-density_vector in R^(nelx * nely) = R^4800
+density_vector in R^(nelx * nely) = R^800
 ```
 
 评测器会将密度裁剪到：
@@ -89,7 +89,7 @@ mean(density) <= volfrac
 - 密度更新规则
 - 允许范围内的滤波策略
 - 步长或迭代调度
-- OC/MMA 的使用策略
+- OC 更新策略与调度
 
 评测器与 benchmark 元数据文件为只读。
 
